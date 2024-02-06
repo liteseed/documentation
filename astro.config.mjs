@@ -14,14 +14,13 @@ export default defineConfig({
       },
       title: 'Liteseed',
       social: {
-        github: 'https://github.com/liteseed/documentation'
+        github: 'https://github.com/liteseed'
       },
-
       sidebar: [
         {
           label: 'Start Here',
           items: [
-            { label: 'Installation', link: '/start-here/installation' }
+            { label: 'Installation', link: '/' }
           ]
         },
         {
