@@ -10,9 +10,9 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const site = new AstroSite(stack, "site");
+      const site = new AstroSite(stack, "site", { customDomain: app.stage == "production" ? { domainName: "liteseed.xyz", domainAlias: "www.liteseed.xyz"} : undefined });
       stack.addOutputs({
-        url: site.url,
+	   SiteUrl:  site.customDomainUrl || site.url,
       });
     });
   },
