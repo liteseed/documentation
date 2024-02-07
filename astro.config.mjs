@@ -9,10 +9,10 @@ export default defineConfig({
   integrations: [
     starlight({
       logo: {
-        light: "./src/assets/icon_light.png",
-        dark: "./src/assets/icon_dark.png"
+        light: "./src/assets/icon_light.webp",
+        dark: "./src/assets/icon_dark.webp"
       },
-      title: 'Liteseed',
+      title: "",
       social: {
         github: 'https://github.com/liteseed'
       },
