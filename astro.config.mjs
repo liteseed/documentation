@@ -20,20 +20,28 @@ export default defineConfig({
         {
           label: 'Start Here',
           items: [
-            { label: 'Installation', link: '/' }
+            { label: 'Overview', link: '/' },
+            { label: 'What is Liteseed Network?', link: '/start-here/what-is-liteseed-network' }
           ]
         },
         {
           label: 'Core Concepts',
           items: [
-            { label: 'What is Liteseed Network?', link: '/core-concepts/what-is-liteseed-network' }
+            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
+          ]
+        },
+        {
+          label: 'SDK Reference',
+          items: [
+            { label: 'Installation', link: '/sdk-reference/installation'},
           ]
         },
         {
           label: 'API Reference',
           items: [
-            { label: '/bundlers', link: '/references/bundlers' },
-            { label: '/data', link: '/references/data' }
+            { label: 'Connecting to the API', link: '/api-reference/connecting-to-the-api' },
+            { label: 'Bundlers', link: '/api-reference/bundlers' },
+            { label: 'Data', link: '/api-reference/data' }
           ]
         }
       ],
