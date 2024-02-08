@@ -5,7 +5,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://liteseed.xyz",
+  site: "https://docs.liteseed.xyz",
   integrations: [
     starlight({
       logo: {
