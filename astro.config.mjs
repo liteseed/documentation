@@ -21,7 +21,6 @@ export default defineConfig({
           label: 'Start Here',
           items: [
             { label: 'Overview', link: '/' },
-            { label: 'What is Liteseed Network?', link: '/start-here/what-is-liteseed-network' }
           ]
         },
         {
@@ -48,7 +47,7 @@ export default defineConfig({
       social: {
         discord: 'https://discord.gg/yh4xsTUWUn',
         github: 'https://github.com/liteseed',
-        twitter: 'https://x.com/liteseed_xyz',
+        'x.com': 'https://x.com/liteseed_xyz',
       },
       title: "Liteseed"
     }),
