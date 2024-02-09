@@ -8,13 +8,13 @@ export default defineConfig({
   site: "https://docs.liteseed.xyz",
   integrations: [
     starlight({
+      customCss: ["./src/styles.css"],
+      description: "Liteseed Network is a decentralized network of bundlers",
+      editLink: { baseUrl: "https://github.com/liteseed/documentation" },
       logo: {
         light: "./src/assets/icon_light.webp",
-        dark: "./src/assets/icon_dark.webp"
-      },
-      title: "",
-      social: {
-        github: 'https://github.com/liteseed'
+        dark: "./src/assets/icon_dark.webp",
+        replacesTitle: true,
       },
       sidebar: [
         {
@@ -33,7 +33,7 @@ export default defineConfig({
         {
           label: 'SDK Reference',
           items: [
-            { label: 'Installation', link: '/sdk-reference/installation'},
+            { label: 'Installation', link: '/sdk-reference/installation' },
           ]
         },
         {
@@ -45,7 +45,12 @@ export default defineConfig({
           ]
         }
       ],
-      customCss: ["./src/styles.css"]
+      social: {
+        discord: 'https://discord.gg/yh4xsTUWUn',
+        github: 'https://github.com/liteseed',
+        twitter: 'https://x.com/liteseed_xyz',
+      },
+      title: "Liteseed"
     }),
     tailwind({
       applyBaseStyles: false
