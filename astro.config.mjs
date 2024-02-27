@@ -24,25 +24,11 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Core Concepts',
-          items: [
-            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
-          ]
-        },
-        {
-          label: 'SDK Reference',
-          items: [
-            { label: 'Installation', link: '/sdk-reference/installation' },
-          ]
-        },
-        {
           label: 'API Reference',
           items: [
             { label: 'Connecting to the API', link: '/api-reference/connecting-to-the-api' },
-            { label: 'Bundlers', link: '/api-reference/bundlers' },
-            { label: 'Data', link: '/api-reference/data' }
           ]
-        }
+        },
       ],
       social: {
         discord: 'https://discord.gg/yh4xsTUWUn',
