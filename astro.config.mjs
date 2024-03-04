@@ -24,6 +24,13 @@ export default defineConfig({
           ]
         },
         {
+          label: 'Core Concepts',
+          items: [
+            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
+            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
+          ]
+        },
+        {
           label: 'API Reference',
           items: [
             { label: 'Connecting to the API', link: '/api-reference/connecting-to-the-api' },
