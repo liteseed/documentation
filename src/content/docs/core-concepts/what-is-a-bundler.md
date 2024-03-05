@@ -6,11 +6,15 @@ description: A decentralized network of bundlers powered by AO.
 Uploading a large amount of data onto Arweave is a challenge.
 Throughput is the amount of data uploaded per second for a network.
 
+![An arweave tranasaction](/src/assets/arweave_transaction.png)
+
 [ANS-104: Bundled Data](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md) describes a solution to the problem. It introduces the concept of wrapping multiple data items together into a bundle. Bundles are then posted to Arweave by an aptly named software called Bundler.
 
 Bundlers are the solution to the throughput problem.
 They make it possible to upload a large amount of data onto Arweave.
 You get the additional benefits of cheaper uploads and faster indexing.
+
+![A bundled tranasaction](/src/assets/bundled_arweave_transaction.png)
 
 ### Bundling - A High-Level Overview
 
