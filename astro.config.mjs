@@ -36,6 +36,12 @@ export default defineConfig({
             { label: 'Connecting to the API', link: '/api-reference/connecting-to-the-api' },
           ]
         },
+        {
+          label: 'Examples',
+          items: [
+            { label: 'Save and fetch a file from Arweave', link: '/examples/save-and-fetch-a-file-from-arweave' },
+          ]
+        },
       ],
       social: {
         discord: 'https://discord.gg/yh4xsTUWUn',
