@@ -28,7 +28,6 @@ The expected body is a `FormData` which expects a key `"file"`.
 import { readFileSync } from "fs";
 
 /**
- * 
  * @param {File} file 
  */
 async function upload(file) {
@@ -47,7 +46,7 @@ upload(file);
 ```
 
 The response would look something like this
-```sh
+```json
 {
   "id" : "c350e487-4143-4ccb-88f2-68fedb578167",
   "bundlerId" : 7,

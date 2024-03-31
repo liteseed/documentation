@@ -24,22 +24,23 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Core Concepts',
+          label: 'Developer Reference',
           items: [
-            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
-            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
-          ]
-        },
-        {
-          label: 'API Reference',
-          items: [
-            { label: 'Connecting to the API', link: '/api-reference/connecting-to-the-api' },
+            { label: 'Connecting to the API', link: '/developer-reference/connecting-to-the-api' },
+            { label: 'Interacting with the AO Process', link: '/developer-reference/interacting-with-the-ao-process' },
           ]
         },
         {
           label: 'Examples',
           items: [
             { label: 'Save and fetch a file from Arweave', link: '/examples/save-and-fetch-a-file-from-arweave' },
+          ]
+        },
+        {
+          label: 'Core Concepts',
+          items: [
+            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
+            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
           ]
         },
       ],
