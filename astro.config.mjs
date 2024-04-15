@@ -25,9 +25,10 @@ export default defineConfig({
         },
         {
           label: 'Developer Reference',
-          items: [
-            { label: 'Connecting to the API', link: '/developer-reference/connecting-to-the-api' },
-            { label: 'Interacting with the AO Process', link: '/developer-reference/interacting-with-the-ao-process' },
+          items: [ 
+            { label: 'Connecting to the API', link: '/developers/connecting-to-the-api' },
+            { label: "Using Node.js", link: "/developers/nodejs" },
+            { label: 'Interacting with the AO Process', link: '/developers/interacting-with-the-ao-process' },
           ]
         },
         {
