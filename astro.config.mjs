@@ -24,7 +24,14 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Developer Reference',
+          label: 'Core Concepts',
+          items: [
+            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
+            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
+          ]
+        },
+        {
+          label: 'Developers',
           items: [ 
             { label: 'Connecting to the API', link: '/developers/connecting-to-the-api' },
             { label: "Using Node.js", link: "/developers/nodejs" },
@@ -38,10 +45,9 @@ export default defineConfig({
           ]
         },
         {
-          label: 'Core Concepts',
-          items: [
-            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
-            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
+          label: 'Operators',
+          items: [ 
+            { label: 'Running a Node', link: '/operators/running-a-node' },
           ]
         },
       ],

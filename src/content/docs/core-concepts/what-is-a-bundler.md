@@ -14,7 +14,7 @@ Bundlers are the solution to the throughput problem.
 They make it possible to upload a large amount of data onto Arweave.
 You get the additional benefits of cheaper uploads and faster indexing.
 
-![A bundled tranasaction](https://ucarecdn.com/4e17c0c6-4a74-4337-b38e-b9bcc3a24a81/bundledarweavetransaction3.png)
+![A bundled transaction](https://ucarecdn.com/4e17c0c6-4a74-4337-b38e-b9bcc3a24a81/bundledarweavetransaction3.png)
 
 ### Bundling - A High-Level Overview
 

@@ -1,0 +1,57 @@
+---
+title: Running a Node
+description: Guide for running a Node
+---
+
+# Running the latest version of the Node by building a Docker Image
+
+The steps below describe the commands that need to be run to build the docker image and run it.
+We start by cloning the latest repository from github on to your system.
+
+```sh
+git clone https://github.com/liteseed/edge
+```
+
+Next we go into the `./edge` directory and create the docker image using the dockerfile.
+]
+```sh
+cd ./edge
+docker build -t edge .
+```
+
+To persist data we create a volume.
+This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
+
+```sh
+docker create volume liteseed
+```
+
+The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
+
+```sh
+docker run -v liteseed:/data edge generate
+docker run -v liteseed:/data edge migrate
+```
+
+Now you should probably get in touch with the team so we can allocate some tokens to the you.
+
+After you get some tokens in your wallet you can check your balance
+
+```sh
+docker run -v liteseed:/data edge balance
+```
+
+At this point you can stake your tokens
+```sh
+docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
+```
+
+Now running the `balance` command will return `Staked: YES`.
+```sh
+docker run -v liteseed:/data edge balance
+```
+
+Finally, you can now run the bundler using and start earning both $AR and $SEED. 
+```sh
+docker run -v liteseed:/data edge start
+```
