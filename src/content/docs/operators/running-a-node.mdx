@@ -26,7 +26,7 @@ To persist data we create a volume.
 This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
 
 ```sh
-docker create volume liteseed
+docker volume create liteseed
 ```
 
 The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
