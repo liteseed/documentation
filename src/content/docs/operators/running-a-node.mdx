@@ -3,58 +3,74 @@ title: Running a Node
 description: Guide for running a Node
 ---
 
-The node is run using a CLI tool called edge.
-The latest release of the latest version of the CLI tool is available on [Github](https://github.com/liteseed/edge/releases)
+The node is run using a CLI tool called edge. The latest release of the latest version of the CLI tool is available on [Github](https://github.com/liteseed/edge/releases)
 
-# Running the latest version of the Node by building a Docker Image
+## Running a Node using Docker
 
 The steps below describe the commands that need to be run to build the docker image and run it.
-We start by cloning the latest repository from github on to your system.
 
-```sh
-git clone https://github.com/liteseed/edge
-```
+import { Steps } from '@astrojs/starlight/components';
 
-Next we go into the `./edge` directory and create the docker image using the dockerfile.
-]
-```sh
-cd ./edge
-docker build -t edge .
-```
+<Steps>
 
-To persist data we create a volume.
-This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
+1.  We start by cloning the latest repository from github on to your system.
+    ```zsh
+    git clone https://github.com/liteseed/edge
+    ```
 
-```sh
-docker create volume liteseed
-```
+2. Next we step into the `./edge` directory and create a docker image using the Dockerfile.
+    ```zsh
+    cd ./edge
+    docker build -t edge .
+    ```
 
-The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
+3. To persist data we create a volume. This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
+    ```zsh
+    docker create volume liteseed
+    ```
 
-```sh
-docker run -v liteseed:/data edge generate
-docker run -v liteseed:/data edge migrate
-```
+4. The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
+    ```zsh
+    docker run -v liteseed:/data edge generate # this generates a new wallet with a new private key
+    docker run -v liteseed:/data edge migrate
+    ```
+   At this point you can run the node but you still need to register yourn node on the network smart contracts.
+    ```zsh
+    docker run -v liteseed:/data edge start
+    ```
+5. Now you should probably get in touch with the team so we can allocate some tokens to your node.
+    You can email hello@liteseed.xyz with a URL of your working no.
+    After you get some tokens in your wallet you can check your balance
 
-Now you should probably get in touch with the team so we can allocate some tokens to the you.
+    ```zsh
+    docker run -v liteseed:/data edge balance
+    ```
 
-After you get some tokens in your wallet you can check your balance
+   The output would look something like this
+    ```
+    Address:  F7fmxSBJx5RlIRrt825iIEAL110cKP2Bf8tYd0Q1STU
+    Balance: 1000 LSD
+    Staked:  No
+    ```
+  
+  6. At this point you can stake your tokens and register your URL on your AO smart contract.
+      ```zsh
+      docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
+      ```
 
-```sh
-docker run -v liteseed:/data edge balance
-```
+      Now running the `balance` command will return `Staked: YES`.
+      ```zsh
+      docker run -v liteseed:/data edge balance
+      ```
 
-At this point you can stake your tokens
-```sh
-docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
-```
+      ```
+      Address:  F7fmxSBJx5RlIRrt825iIEAL110cKP2Bf8tYd0Q1STU
+      Balance: 0 LSD
+      Staked:  Yes
+      ```
 
-Now running the `balance` command will return `Staked: YES`.
-```sh
-docker run -v liteseed:/data edge balance
-```
-
-Finally, you can now run the bundler using and start earning both $AR and $SEED. 
-```sh
-docker run -v liteseed:/data edge start
-```
+  7. Finally, you can now run the bundler using and start earning both $AR and $LSD. 
+      ```zsh
+      docker run -v liteseed:/data edge start
+      ```
+</Steps>

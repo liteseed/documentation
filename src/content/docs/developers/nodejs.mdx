@@ -53,7 +53,7 @@ const liteseed = new Liteseed(signer, CONTRACT_ADDRESS);
 
 async function sendData(data) {
     const dataItem = await liteseed.createDataItem({ data });
-    await liteseed.initiate({ dataItem, quantity: 100n });
+    await liteseed.initiate({ dataItem, size: 100n });
     const id = await dataItem.id;
     console.log(id);
     const upload = await liteseed.getUpload({ id });
