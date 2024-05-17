@@ -21,18 +21,18 @@ import { Aside, Steps } from '@astrojs/starlight/components';
 2. Next we step into the `./edge` directory and create a docker image using the Dockerfile.
     ```zsh
     cd ./edge
-    docker build -t edge .
+    sudo docker build -t edge .
     ```
 
 3. To persist data we create a volume. This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
     ```zsh
-    docker create volume liteseed
+    sudo docker volume create liteseed
     ```
 
 4. The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
     ```zsh
-    docker run -v liteseed:/data edge generate # this generates a new wallet with a new private key
-    docker run -v liteseed:/data edge migrate
+    sudo docker run -v liteseed:/data edge generate # this generates a new wallet with a new private key
+    sudo docker run -v liteseed:/data edge migrate
     ```
    
     <Aside type="danger" title="`edge generate` command will overwrite existing file">
@@ -50,7 +50,7 @@ import { Aside, Steps } from '@astrojs/starlight/components';
     After you get some tokens in your wallet you can check your balance
 
     ```zsh
-    docker run -v liteseed:/data edge balance
+    sudo docker run -v liteseed:/data edge balance
     ```
 
    The output would look something like this
@@ -62,7 +62,7 @@ import { Aside, Steps } from '@astrojs/starlight/components';
   
   6. At this point you can stake your tokens and register your URL on your AO smart contract.
       ```zsh
-      docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
+      sudo docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
       ```
 
       Now running the `balance` command will return `Staked: YES`.
@@ -78,6 +78,6 @@ import { Aside, Steps } from '@astrojs/starlight/components';
 
   7. Finally, you can now run the bundler using and start earning both $AR and $LSD. 
       ```zsh
-      docker run -v liteseed:/data edge start
+      sudo docker run -v liteseed:/data edge start
       ```
 </Steps>
