@@ -24,17 +24,18 @@ import { Aside, Steps } from '@astrojs/starlight/components';
     sudo docker build -t edge .
     ```
 
-3. To persist data we create a volume. This volume shall contain your arweave private key, the orders created on your bundler, and the storage of the data.
+3. You can persist your wallet data on the disk. This is useful if you want to keep your wallet data even after the container is destroyed.
     ```zsh
-    sudo docker volume create liteseed
+    sudo mkdir -p /var/lib/liteseed
+    sudo cp config.json /var/lib/liteseed
     ```
 
-4. The next step would be to generate your arweave private key and migrate the SQLite database in your volume.
+4. The next step would be to generate your arweave private key at `/var/lib/liteseed/signer.json`.
     ```zsh
-    sudo docker run -v liteseed:/data edge generate # this generates a new wallet with a new private key
-    sudo docker run -v liteseed:/data edge migrate
+    sudo docker run --rm -v /var/lib/liteseed:/data edge generate # this generates a new wallet with a new private key
+    sudo docker run --rm -v /var/lib/liteseed:/data edge migrate
     ```
-   
+
     <Aside type="danger" title="`edge generate` command will overwrite existing file">
       Rerunning the `edge generate` command will overwrite the private key file you point to in `config.json`.
 
@@ -42,15 +43,15 @@ import { Aside, Steps } from '@astrojs/starlight/components';
     </Aside>
    At this point you can run the node but you still need to register your node on the network smart contracts.
     ```zsh
-    docker run -v liteseed:/data edge start
+    docker run -v /var/lib/liteseed:/data edge start
     ```
-  
+
 5. Now you should probably get in touch with the team so we can allocate some tokens to your node.
-    You can email hello@liteseed.xyz with a URL of your working no.
+    You can email `hello@liteseed.xyz` with a URL of your working no.
     After you get some tokens in your wallet you can check your balance
 
     ```zsh
-    sudo docker run -v liteseed:/data edge balance
+    sudo docker run --rm -v /var/lib/liteseed:/data edge balance
     ```
 
    The output would look something like this
@@ -59,15 +60,15 @@ import { Aside, Steps } from '@astrojs/starlight/components';
     Balance: 1000 LSD
     Staked:  No
     ```
-  
-  6. At this point you can stake your tokens and register your URL on your AO smart contract.
+
+  1. At this point you can stake your tokens and register your URL on your AO smart contract.
       ```zsh
-      sudo docker run -v liteseed:/data edge stake -u "https://yourbundlerurl.com"
+      sudo docker run --rm -v /var/lib/liteseed:/data edge stake -u "https://yourbundlerurl.com"
       ```
 
       Now running the `balance` command will return `Staked: YES`.
       ```zsh
-      docker run -v liteseed:/data edge balance
+      docker run --rm -v /var/lib/liteseed:/data edge balance
       ```
 
       ```
@@ -76,8 +77,8 @@ import { Aside, Steps } from '@astrojs/starlight/components';
       Staked:  Yes
       ```
 
-  7. Finally, you can now run the bundler using and start earning both $AR and $LSD. 
+  2. Finally, you can now run the bundler using and start earning both $AR and $LSD.
       ```zsh
-      sudo docker run -v liteseed:/data edge start
+      sudo docker run -v /var/lib/liteseed:/data -p 8080:8080 edge start
       ```
 </Steps>
