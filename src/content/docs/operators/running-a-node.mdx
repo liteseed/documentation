@@ -61,24 +61,24 @@ import { Aside, Steps } from '@astrojs/starlight/components';
     Staked:  No
     ```
 
-  1. At this point you can stake your tokens and register your URL on your AO smart contract.
-      ```zsh
-      sudo docker run --rm -v /var/lib/liteseed:/data edge stake -u "https://yourbundlerurl.com"
-      ```
+6. At this point you can stake your tokens and register your URL on your AO smart contract.
+   ```zsh
+   sudo docker run --rm -v /var/lib/liteseed:/data edge stake -u "https://yourbundlerurl.com"
+   ```
 
-      Now running the `balance` command will return `Staked: YES`.
-      ```zsh
-      docker run --rm -v /var/lib/liteseed:/data edge balance
-      ```
+   Now running the `balance` command will return `Staked: YES`.
+   ```zsh
+   docker run --rm -v /var/lib/liteseed:/data edge balance
+   ```
 
-      ```
-      Address:  F7fmxSBJx5RlIRrt825iIEAL110cKP2Bf8tYd0Q1STU
-      Balance: 0 LSD
-      Staked:  Yes
-      ```
+   ```
+   Address:  F7fmxSBJx5RlIRrt825iIEAL110cKP2Bf8tYd0Q1STU
+   Balance: 0 LSD
+   Staked:  Yes
+   ```
 
-  2. Finally, you can now run the bundler using and start earning both $AR and $LSD.
-      ```zsh
-      sudo docker run -v /var/lib/liteseed:/data -p 8080:8080 edge start
-      ```
+7. Finally, you can now run the bundler using and start earning both $AR and $LSD.
+   ```zsh
+   sudo docker run -v /var/lib/liteseed:/data -p 8080:8080 edge start
+   ```
 </Steps>
