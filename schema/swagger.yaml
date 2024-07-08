@@ -1,0 +1,265 @@
+definitions:
+  server.DataItemPostResponse:
+    properties:
+      dataCaches:
+        items:
+          type: string
+        type: array
+      deadlineHeight:
+        type: integer
+      fastFinalityIndexes:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      owner:
+        type: string
+      version:
+        type: string
+    type: object
+  server.DataItemPutResponse:
+    properties:
+      id:
+        type: string
+      paymentId:
+        type: string
+    type: object
+  server.HTTPError:
+    properties:
+      code:
+        format: integer
+        type: integer
+      message:
+        format: string
+        type: string
+    type: object
+  server.PriceGetResponse:
+    properties:
+      address:
+        example: Cbj95zDZBBhmyht6iFlEf7xmSCSVZGw436V6HWmm9Ek
+        format: string
+        type: string
+      price:
+        example: "1000000000000"
+        format: string
+        type: string
+    type: object
+host: https://api.liteseed.xyz
+info:
+  contact:
+    email: support@liteseed.xyz
+    name: API Support
+    url: https://liteseed.xyz/support
+  description: The API is currently live at https://api.liteseed.xyz
+  title: Liteseed API
+  version: 0.0.1
+paths:
+  /price/{bytes}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get the current price of data upload using the Liteseed Network.
+        It returns the price of upload in wei and the address to pay.
+      parameters:
+      - description: Size of Data
+        in: path
+        maximum: 2147483647
+        minimum: 1
+        name: bytes
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.PriceGetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "424":
+          description: Failed Dependency
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Get price of upload
+      tags:
+      - Payment
+  /tx/:
+    post:
+      consumes:
+      - application/json
+      description: Post your data in a specified ANS-104 data-item format.
+      parameters:
+      - description: ID of the data-item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.DataItemPostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "424":
+          description: Failed Dependency
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Post a data-item
+      tags:
+      - Upload
+  /tx/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get all the fields of a posted data-item
+      parameters:
+      - description: ID of the data-item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "424":
+          description: Failed Dependency
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Get a posted data-item
+      tags:
+      - Upload
+  /tx/{id}/{payment_id}:
+    put:
+      consumes:
+      - application/json
+      description: Once a payment is made send a transaction id for a data-item
+      parameters:
+      - description: data-item id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: payment id
+        in: path
+        name: paymentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.DataItemPutResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Send a payment id for a data-item
+      tags:
+      - Upload
+  /tx/{id}/data:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get only the data of a posted data-item. It tries to automatically detect mime-type.
+        You can specify the response mime-type by either sending an mime-type query parameter or an accept header in the request.
+        Supported mime-type are listed here - https://github.com/gabriel-vasile/mimetype/blob/master/supported_mimes.md.
+        If all else fails defaults to `application/octet-stream`
+      parameters:
+      - description: ID of the data-Item
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Mime type of the response
+        in: query
+        name: mime-type
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: bytes
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "424":
+          description: Failed Dependency
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Get data of a data-item
+      tags:
+      - Upload
+  /tx/{id}/status:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get the current status of a posted data-item.
+        Response "created", "queued", "sent", "confirmed", "failed", "invalid"
+      parameters:
+      - description: ID of the data-item
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "424":
+          description: Failed Dependency
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.HTTPError'
+      summary: Get the status of a data-item
+      tags:
+      - Upload
+swagger: "2.0"

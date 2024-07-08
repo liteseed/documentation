@@ -1,5 +1,5 @@
 ---
-title: Save and Fetch a DataItem
+title: Save and fetch a data-item
 description: This example demonstrates saving and querying data using Liteseed
 ---
 
@@ -20,17 +20,34 @@ For this example we'll use the image below and save it on Arweave.
 
 ## Sending the Request
 
-Uploading a file is simple send a `POST` Request to `/data` endpoint.
-The expected body is a `FormData` which expects a key `"file"`.
+Uploading a data-item requires sending a request to `/tx` endpoint.
+The expected body is the raw binary of the data-item.
 
 ```js
 import { readFileSync } from "fs";
-import { createData } from "arbundles";
+import { createData, ArweaveSigner } from "arbundles";
 /**
  * @param {File} file 
  */
+
+
 async function upload(file) {
-  const data = formData()
+  const data = Buffer.from(await file.arrayBuffer());
+  const jwk = JSON.parse(readFileSync("./arweave.json").toString());
+  const signer = new ArweaveSigner(jwk);
+
+  const dataItem = createData(data, signer);
+  await dataItem.sign(signer);
+  const size = dataItem.getRaw().length.toString();
+
+  const response = await fetch(`https://api.liteseed.xyz/tx`, {
+          method: "POST",
+          body: dataItem.getRaw(),
+          headers: {
+                "content-length": size,
+                "content-type": "application/octet-stream",
+          }
+        });
   data.append("file", new Blob([file.buffer]), file.name);
   data.append("tags[]", file.type)
   data.append("tags[]", "image")

@@ -1,12 +1,14 @@
 import { defineConfig } from "astro/config";
 import aws from "astro-sst";
-import starlight from '@astrojs/starlight';
-import tailwind from '@astrojs/tailwind';
+import starlight from "@astrojs/starlight";
+import tailwind from "@astrojs/tailwind";
+import starlightOpenAPI, { openAPISidebarGroups } from "starlight-openapi"
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://docs.liteseed.xyz",
   integrations: [
+
     starlight({
       customCss: ["./src/styles.css"],
       description: "Liteseed Network is a decentralized network of bundlers",
@@ -16,45 +18,46 @@ export default defineConfig({
         dark: "./src/assets/icon_dark.webp",
         replacesTitle: true,
       },
+      plugins: [
+        starlightOpenAPI([
+          {
+            base: "api",
+            label: "API Reference",
+            schema: "./schema/swagger.yaml",
+          },
+        ]),
+      ],
       sidebar: [
         {
-          label: 'Start Here',
+          label: "Start Here",
           items: [
-            { label: 'Overview', link: '/' },
+            { label: "Overview", link: "/" },
           ]
         },
+
         {
-          label: 'Core Concepts',
+          label: "Core Concepts",
           items: [
-            { label: 'What is a Bundler?', link: '/core-concepts/what-is-a-bundler' },
-            { label: 'Network of Bundlers', link: '/core-concepts/network-of-bundlers' },
+            { label: "What is Arweave?", link: "/core-concepts/what-is-arweave" },
+            { label: "What is AO?", link: "/core-concepts/what-is-ao" },
+            { label: "What is a bundler?", link: "/core-concepts/what-is-a-bundler" },
+            { label: "What is a data-item?", link: "/core-concepts/what-is-a-data-item" },
+            { label: "Liteseed in-depth", link: "/core-concepts/network-of-bundlers" },
           ]
         },
+        ...openAPISidebarGroups,
         {
-          label: 'Developers',
-          items: [ 
-            { label: 'Connecting to the API', link: '/developers/connecting-to-the-api' },
-            { label: "Using Node.js", link: "/developers/nodejs" },
-            { label: 'Interacting with the AO Process', link: '/developers/interacting-with-the-ao-process' },
-          ]
-        },
-        {
-          label: 'Examples',
+          label: "Examples",
           items: [
-            { label: 'Save and fetch a file from Arweave', link: '/examples/save-and-fetch-a-file-from-arweave' },
-          ]
-        },
-        {
-          label: 'Operators',
-          items: [ 
-            { label: 'Running a Node', link: '/operators/running-a-node' },
+            { label: "Save and fetch a file from Arweave", link: "/examples/save-and-fetch-a-file-from-arweave" },
+            { label: "Save and fetch a data-item", link: "/examples/save-and-fetch-a-data-item" },
           ]
         },
       ],
       social: {
-        discord: 'https://discord.gg/yh4xsTUWUn',
-        github: 'https://github.com/liteseed',
-        'x.com': 'https://x.com/liteseed_xyz',
+        discord: "https://discord.gg/yh4xsTUWUn",
+        github: "https://github.com/liteseed",
+        "x.com": "https://x.com/liteseed_xyz",
       },
       title: "Liteseed"
     }),

@@ -1,12 +1,12 @@
 ---
-title: What is a Bundler?
+title: What is a bundler?
 description: A decentralized network of bundlers powered by AO.
 ---
 
 Uploading a large amount of data onto Arweave is a challenge.
 Throughput is the amount of data uploaded per second for a network.
 
-![An arweave tranasaction](https://ucarecdn.com/ffe24af7-4b6c-4bcf-85e7-dfc4c52f0036/arweavetransaction6.png)
+![An arweave tranasaction](https://api.liteseed.xyz/tx/9jGe0iabgBqywpa0kthnVRK8oEmBG13RreeAxtBkr9g/data)
 
 [ANS-104: Bundled Data](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md) describes a solution to the problem. It introduces the concept of wrapping multiple data items together into a bundle. Bundles are then posted to Arweave by an aptly named software called Bundler.
 
