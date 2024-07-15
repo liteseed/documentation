@@ -4,84 +4,28 @@ description: Overview of the documentation
 next: false
 ---
 
-import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+import {LinkCard, CardGrid} from '@astrojs/starlight/components';
 
 Liteseed Network is a Decentralized Physical Infrastructure Network (DePIN) to upload data onto Arweave.
 
-In simpler terms, the Liteseed Network is a network of bundlers. 
-With Liteseed, you can upload large amounts of data onto Arweave without trusting a third-party service.
+In simpler terms, with Liteseed you can upload large amounts of data onto Arweave without trusting a third-party service.
 
 <div class="flex items-center justify-center">
-  <img src="https://ucarecdn.com/8cdddf48-31f0-402c-b076-5855ffb65e97/liteseednetwork.png" alt="liteseed network" width="350"/>
+    <img src="https://api.liteseed.xyz/tx/Z0DgsXojrPAaKBbh9vvG_FT4oxdZ4Jz4Ik58MdxgUBY/data?mime-type=png" alt="liteseed network"
+         width="350"/>
 </div>
-
-### Arweave is Permanent Data Storage
-
-Arweave is a blockchain that unlocks permanent data storage. For a fee, you can make some data permanent, essentially a Bitcoin for data. 
-
-:::note[Learn more about Arweave]
-Visit the Arweave website [arweave.org](https://arweave.org)
-:::
-
-### Permanent Data Storage - Faster
-
-Permanent data storage is a massive deal.
-It means you can upload something and have a guarantee that your data will exist forever.
-However, throughput - data uploaded per second is still a challenge.
-
-### Bundlers
-
-Bundlers are a solution to the throughput problem - data uploaded per second is still a challenge.
-They make it possible to upload a large amount of data onto Arweave.
-You get the additional benefits of cheaper uploads and faster indexing.
-
-<LinkCard
-  title="What is a Bundler?"
-  description="Learn more about Bundlers and how they work"
-  href="/core-concepts/what-is-a-bundler"
-/>
-
-### Limitations
-
-However, there exists no such thing as a free lunch. 
-Using a bundler has several limitations - 
-Running a bundler is not accessible
-Bundlers are hard to scale
-Data sent to a bundler is not private
-Third-party services are centralized
-
-## Liteseed
-
-The goal of Liteseed is to make **permanent data accessible** while following the ethos of decentralization at its core.
-We acknowledge that there are many inherent complications with building a network. 
-Things like network design, privacy, and security become a concern. Both for us - the creators and the users. 
-
-To address these problems Liteseed is built on AO. 
-AO is a hyper-parallel computing platform built on top of Arweave. 
-AO handles scaling and security so Liteseed can focus on network design and privacy.
-
-:::note[Learn more about AO]
-Follow the link to learn more about AO.
-
-[https://ao.arweave.dev](https://ao.arweave.dev/)
-:::
 
 ## Where to go from here?
 
 <CardGrid>
- <LinkCard 
-    title="Connect to the REST API" 
-    description="View the REST API reference"
-    href="/api/overview"
-   />
-   <LinkCard 
-    title="Quickstart using Examples" 
-    description="Examples are a great way to start building using Liteseed"
-    href="/examples/save-and-fetch-a-file-from-arweave"
-   />
-    <LinkCard 
-    title="How it all works?" 
-    description="Read more for a high-level overview of the system"
-    href="/core-concepts/what-is-a-bundler"
-   />
+    <LinkCard title="Connect to the REST API" description="View the REST API reference" href="/api/"/>
+    <LinkCard
+        title="Quickstart using Examples"
+        description="Examples are a great way to start building using Liteseed"
+        href="/examples/post-a-data-item"/>
+    <LinkCard
+        title="How it all works?"
+        description="Read more for a high-level overview of the system"
+        href="/core-concepts/what-is-arweave"
+    />
 </CardGrid>

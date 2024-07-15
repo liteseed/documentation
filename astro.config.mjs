@@ -22,8 +22,10 @@ export default defineConfig({
         starlightOpenAPI([
           {
             base: "api",
+            collapsed: false,
             label: "API Reference",
             schema: "./schema/swagger.yaml",
+
           },
         ]),
       ],
@@ -34,23 +36,20 @@ export default defineConfig({
             { label: "Overview", link: "/" },
           ]
         },
-
+        ...openAPISidebarGroups,
+        {
+          label: "Examples",
+          items: [
+            { label: "Post a data-item to Arweave", link: "/examples/post-a-data-item" },
+            { label: "Post a file to Arweave", link: "/examples/post-a-file" },
+          ]
+        },
         {
           label: "Core Concepts",
           items: [
             { label: "What is Arweave?", link: "/core-concepts/what-is-arweave" },
             { label: "What is AO?", link: "/core-concepts/what-is-ao" },
-            { label: "What is a bundler?", link: "/core-concepts/what-is-a-bundler" },
-            { label: "What is a data-item?", link: "/core-concepts/what-is-a-data-item" },
-            { label: "Liteseed in-depth", link: "/core-concepts/network-of-bundlers" },
-          ]
-        },
-        ...openAPISidebarGroups,
-        {
-          label: "Examples",
-          items: [
-            { label: "Save and fetch a file from Arweave", link: "/examples/save-and-fetch-a-file-from-arweave" },
-            { label: "Save and fetch a data-item", link: "/examples/save-and-fetch-a-data-item" },
+            { label: "What is a Liteseed?", link: "/core-concepts/what-is-liteseed" },
           ]
         },
       ],
