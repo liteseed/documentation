@@ -1,0 +1,207 @@
+---
+title: Post signed data to Arweave
+description: This example demonstrates posting a data-item using Liteseed
+---
+
+This guide is in typescript.
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="4GB File Size Limit!">
+  The API is currently in beta so file upload size limit is set to 4GB.
+</Aside>
+
+## Background
+
+A transaction can upload data onto Arweave. To upload data using Liteseed Network
+you need to sign data into a special format called a **Data-Item**.
+These data-items are batched together into a single transaction called a bundle and posted to Arweave.
+Learn more about data-items & bundles here: [ANS-104: Bundled Data v2.0 - Binary Serialization](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md).
+
+## Installing the required packages
+
+This tutorial requires some packages to make uploading data easier.
+
+```shell
+npm install arweave arbundles
+```
+`arweave` is the official js library for interacting with the Arweave library.
+
+`arbundles` is the recommended library for converting data into data-item.
+
+## Uploading the Data
+
+Uploading has 3 steps:
+1. Signing Data
+2. Posting the signed data to Liteseed
+3. Paying the upload transaction fee
+4. Notifying the network of the payment
+
+### 1. Signing Data
+
+Use an arweave wallet jwk to sign the data.
+
+```ts
+async function signData(data: Uint8Array | string, jwk: any): Promise<DataItem> {
+    const signer = new ArweaveSigner(jwk);
+    const dataItem = await createData(data, signer);
+    await dataItem.sign(signer);
+    return dataItem;
+}
+```
+
+
+### 2. Posting the signed data to the API
+
+The signed data is sent to the API using a post request.
+The request expects a header `"application/octet-stream"` and the size of the data-item.
+
+```ts
+type Receipt = {
+    id: string;
+    dataCaches: string[];
+    fastFinalityIndexes: string[];
+    deadlineHeight: number;
+    owner: string;
+    version: string;
+}
+
+async function postData(dataItem: DataItem, size: number): Promise<Receipt> {
+    const response = await fetch(`https://api.liteseed.xyz/tx`, {
+        method: "POST",
+        body: dataItem.getRaw(),
+        headers: {"content-length": size.toString(), "content-type": "application/octet-stream"}
+    });
+    const receipt = await response.json();
+    console.log("Receipt", receipt);
+    return receipt;
+}
+```
+
+The response would look something like this
+```json
+{
+  "id": "vclUklCqp6mTOoCZjkqcD2m06VRhnKtwVNSfMOPV7SM",
+  "dataCaches": ["api.liteseed.xyz"],
+  "fastFinalityIndexes": ["api.liteseed.xyz"],
+  "deadlineHeight": 1460374,
+  "owner": "...",
+  "version": "1.0.0"
+}
+```
+
+:::note[The ID returned is compatible with any Gateway]
+The id returned by API is the Arweave data-item id. You can fetch data from any [gateway](http://ar.io/).
+:::
+
+*Store the id* in a database, so you can query your data later easily.
+
+
+### 3. Paying the Upload Transaction Fee
+
+Check the price of the upload and create a transaction to pay for the upload.
+
+```js
+async function sendPayment(size: number, jwk: any) {
+    const arweave = Arweave.init({});
+    const response = await fetch(`https://api.liteseed.xyz/price/${size}`);
+    const {price, address} = await response.json();
+    console.log("Price in AR", price); // Price of upload
+    console.log("Address to pay", address); // The wallet to pay
+    const tx = await arweave.createTransaction({quantity: price, target: address}, jwk);
+    await arweave.transactions.sign(tx, jwk);
+    await arweave.transactions.post(tx);
+    console.log("Transaction Id", tx.id);
+    return tx;
+}
+
+```
+
+### 4. Notify network of the payment
+
+Next, you need let the network know of the payment.
+Once the payment is confirmed (approximately >20 blocks on Arweave are mined),
+the data is posted to Arweave in a bundle.
+
+```ts
+async function notifyNetwork(id: string, paymentId: string) {
+    const response = await fetch(`https://api.liteseed.xyz/tx/${id}/${paymentId}`, {method: "PUT"});
+    const payment = await response.json();
+    console.log("Payment", payment);
+}
+```
+:::note[What if my payment fails?]
+Data is held for approximately 100 Blocks from the initial post of data.
+:::
+
+# The Complete Example
+
+```ts
+import { ArweaveSigner, createData, type DataItem } from "arbundles/node";
+import Arweave from "arweave";
+import {readFileSync} from "fs";
+
+type Receipt = {
+    id: string;
+    dataCaches: string[];
+    fastFinalityIndexes: string[];
+    deadlineHeight: number;
+    owner: string;
+    version: string;
+};
+
+async function signData(data: Uint8Array | string, jwk: any): Promise<DataItem> {
+    const signer = new ArweaveSigner(jwk);
+    const dataItem = await createData(data, signer);
+    await dataItem.sign(signer);
+    return dataItem;
+}
+
+async function postData(dataItem: DataItem): Promise<Receipt> {
+    const size = dataItem.getRaw().length;
+    const response = await fetch(`https://api.liteseed.xyz/tx`, {
+        method: "POST",
+        body: dataItem.getRaw(),
+        headers: {"content-length": size.toString(), "content-type": "application/octet-stream"}
+    });
+    const receipt = await response.json();
+    console.log("Receipt", receipt);
+    return receipt;
+}
+
+async function sendPayment(size: number, jwk: any) {
+    const arweave = Arweave.init({});
+    const response = await fetch(`https://api.liteseed.xyz/price/${size}`);
+    const {price, address} = await response.json();
+    console.log("Price in AR", price); // Price of upload
+    console.log("Address to pay", address); // The wallet to pay
+    const tx = await arweave.createTransaction({quantity: price, target: address}, jwk);
+    await arweave.transactions.sign(tx, jwk);
+    await arweave.transactions.post(tx);
+    console.log("Transaction Id", tx.id);
+    return tx;
+}
+
+async function notifyNetwork(id: string, paymentId: string) {
+    const response = await fetch(`https://api.liteseed.xyz/tx/${id}/${paymentId}`, {method: "PUT"});
+    const payment = await response.json();
+    console.log("Payment", payment);
+}
+
+async function upload() {
+    const file: File = readFileSync("file.jpeg");
+    const jwk = JSON.parse(readFileSync("jwk.json"));
+    const data = new Uint8Array(await file.arrayBuffer());
+
+    const dataItem = await signData(data, jwk);
+    const size = dataItem.getRaw().length;
+
+    const receipt = await postData(dataItem);
+    const paymentId: string = await sendPayment(size, jwk);
+
+    await notifyNetwork(receipt.id, paymentId);
+}
+
+upload();
+```
+

@@ -6,7 +6,9 @@ description: A decentralized network of bundlers powered by AO.
 
 Arweave supports transactions of two types transfer of AR and data uploads.
 
-![An arweave transaction](https://api.liteseed.xyz/tx/9jGe0iabgBqywpa0kthnVRK8oEmBG13RreeAxtBkr9g/data)
+![An arweave transaction](https://ucarecdn.com/ffe24af7-4b6c-4bcf-85e7-dfc4c52f0036/arweavetransaction6.png)
+
+
 When you need to upload a large amount of files onto Arweave, separate transactions increase number of transactions
 which increase gas cost for everyone.
 A natural solution is to wrap multiple files into a single transaction.
@@ -32,4 +34,4 @@ When an upload is sent to the network a bundler is selected.
 If the bundler posts the data on time it receives the upload reward and some additional liteseed tokens.
 In case the bundler fails to post the data it can lose its token stake.
 
-![Liteseed Network](https://api.liteseed.xyz/tx/Z0DgsXojrPAaKBbh9vvG_FT4oxdZ4Jz4Ik58MdxgUBY/data?mime-type=png)
+![Liteseed Network](https://ucarecdn.com/d91f67cb-7d4c-4903-a06a-5d11da7571ce/liteseedarweavetransaction1.png)
