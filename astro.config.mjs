@@ -40,6 +40,7 @@ export default defineConfig({
         {
           label: "Examples",
           items: [
+            { label: "Post data using @liteseed/sdk", link: "/examples/post-using-sdk" },
             { label: "Post signed data to Arweave", link: "/examples/post-signed-data-to-arweave" },
             { label: "Post a file to Arweave", link: "/examples/post-a-file" },
           ]

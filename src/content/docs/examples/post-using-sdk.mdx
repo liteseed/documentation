@@ -1,0 +1,110 @@
+---
+title: Post signed data to Arweave using @liteseed/sdk
+description: This example demonstrates posting a data-item using @liteseed/sdk
+---
+
+This guide is in typescript.
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="4GB File Size Limit!">
+    The API is currently in beta so file upload size limit is set to 4GB.
+</Aside>
+
+## Installing the required packages
+
+This tutorial requires some packages to make uploading data easier.
+
+```shell
+npm install @liteseed/sdk
+```
+`@liteseed/sdk` is the official js library for interacting with the Liteseed for js/ts.
+
+## Uploading the Data
+
+The sdk makes it very easy to upload data.
+
+### Initializing the SDK
+
+You can pass your arweave jwk to Liteseed class constructor.
+
+```ts
+import { readFileSync } from "fs";
+import { Liteseed } from "@liteseed/sdk";
+
+const jwk = JSON.parse(readFileSync("./arweave.json").toString());
+const liteseed = new Liteseed(jwk);
+```
+
+### Signing the data
+
+You can convert any data into a special arweave transaction using `signData`.
+
+```ts
+ const data = readFileSync("image.jpeg");
+ const dataItem = await liteseed.signData({ data });
+```
+
+:::note[The ID returned is compatible with any Gateway]
+The id returned by API is the Arweave data-item id. You can fetch data from any [gateway](http://ar.io/).
+:::
+
+*Store the id* in a database, so you can query your data later easily.
+
+### Posting the signed data
+
+Check the price of the upload and create a transaction to pay for the upload.
+
+```js
+  const receipt = await liteseed.postSignedData({ dataItem });
+  console.log(receipt);
+```
+
+The receipt object looks something like the following
+The response would look something like this
+```json
+{
+  "id": "kscLYZ3UHdCUZAimSr6wrSl5v-ll8uOQr_G8ZQ4osYA",
+  "dataCaches": ["api.liteseed.xyz"],
+  "fastFinalityIndexes": ["api.liteseed.xyz"],
+  "deadlineHeight": 1470374,
+  "owner": "...",
+  "version": "1.0.0"
+}
+```
+
+
+### Make the payment
+
+Next, you need to simply make the payment.
+
+```ts
+  const payment = await liteseed.sendPayment({ dataItem });
+  console.log(payment);
+```
+
+:::note[What if my payment fails?]
+Data is held for approximately 100 Blocks from the initial post of data.
+:::
+
+# The Complete Example
+
+```ts
+import { readFileSync } from "node:fs";
+import { Liteseed } from "@liteseed/sdk";
+
+const jwk = JSON.parse(readFileSync("./arweave.json").toString());
+const liteseed = new Liteseed(jwk);
+const data = readFileSync("image.jpeg");
+
+async function upload(data) {
+  const dataItem = await liteseed.signData({ data });
+  const receipt = await liteseed.postSignedData({ dataItem });
+  console.log(receipt);
+  const payment = await liteseed.sendPayment({ dataItem });
+  console.log(payment);
+}
+
+upload(data);
+```
+
