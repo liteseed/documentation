@@ -3,22 +3,27 @@ title: Post signed data to Arweave using @liteseed/sdk
 description: This example demonstrates posting a data-item using @liteseed/sdk
 ---
 
-This guide is in typescript.
+In this tutorial, we will walkthrough the process of uploading data to Arweave using the [`@liteseed/sdk`](https://www.npmjs.com/package/@liteseed/sdk).
 
 import { Aside } from '@astrojs/starlight/components';
 
+<Aside title="Note.">
+This guide is in TypeScript.
+</Aside>
+
 <Aside type="caution" title="4GB File Size Limit!">
-    The API is currently in beta so file upload size limit is set to 4GB.
+    The LiteSeed API is currently in beta so file upload size limit is set to 4GB.
 </Aside>
 
 ## Installing the required packages
 
-This tutorial requires some packages to make uploading data easier.
+This tutorial requires the installation of the `@liteseed/sdk`.
 
 ```shell
 npm install @liteseed/sdk
 ```
-`@liteseed/sdk` is the official js library for interacting with the Liteseed for js/ts.
+
+[`@liteseed/sdk`](https://www.npmjs.com/package/@liteseed/sdk) is the official js library for interacting with the Liteseed for js/ts.
 
 ## Uploading the Data
 
@@ -26,7 +31,7 @@ The sdk makes it very easy to upload data.
 
 ### Initializing the SDK
 
-You can pass your arweave jwk to Liteseed class constructor.
+First, you must create a new instance of Liteseed with the private key (JWK) you will use to sign and upload the data.
 
 ```ts
 import { readFileSync } from "fs";
@@ -46,14 +51,14 @@ You can convert any data into a special arweave transaction using `signData`.
 ```
 
 :::note[The ID returned is compatible with any Gateway]
-The id returned by API is the Arweave data-item id. You can fetch data from any [gateway](http://ar.io/).
+The id returned by API is the Arweave data-item id. You can fetch this data from any [gateway](http://ar.io/).
 :::
 
 *Store the id* in a database, so you can query your data later easily.
 
 ### Posting the signed data
 
-Check the price of the upload and create a transaction to pay for the upload.
+Next, you must pay for the upload to complete the process. You can check for the price of upload as follows.
 
 ```js
   const receipt = await liteseed.postSignedData({ dataItem });
@@ -73,10 +78,9 @@ The response would look something like this
 }
 ```
 
-
 ### Make the payment
 
-Next, you need to simply make the payment.
+Finally, you need to simply make the payment.
 
 ```ts
   const payment = await liteseed.sendPayment({ dataItem });
@@ -88,6 +92,8 @@ Data is held for approximately 100 Blocks from the initial post of data.
 :::
 
 # The Complete Example
+
+Here's the complete code for uploading a data-item using the `@liteseed/sdk`.
 
 ```ts
 import { readFileSync } from "node:fs";
