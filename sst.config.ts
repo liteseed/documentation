@@ -1,19 +1,30 @@
-import type { SSTConfig } from "sst";
-import { AstroSite } from "sst/constructs";
+/// <reference path="./.sst/platform/config.d.ts" />
 
-export default {
-  config(_input) {
+export default $config({
+  // Your app's config
+  app(input) {
     return {
       name: "documentation",
-      region: "us-east-1",
+      home: "aws",
+      providers: {
+
+        aws: {
+          region: "us-east-1",
+        },
+      },
     };
   },
-  stacks(app) {
-    app.stack(function Site({ stack }) {
-      const site = new AstroSite(stack, "site", { customDomain: app.stage === "production" ? { domainName: "docs.liteseed.xyz", hostedZone: "liteseed.xyz" } : undefined });
-      stack.addOutputs({
-	   SiteUrl:  site.customDomainUrl || site.url,
-      });
+  // Your app's resources
+  async run() {
+    const site = new sst.aws.Astro("site", {
+      domain: {
+        name: "docs.liteseed.xyz"
+      },
     });
+
+    // Return outputs
+    return {
+      ...site
+    };
   },
-} satisfies SSTConfig;
+});
