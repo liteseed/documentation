@@ -1,8 +1,7 @@
 import { defineConfig } from "astro/config";
 import aws from "astro-sst";
 import starlight from "@astrojs/starlight";
-import tailwind from "@astrojs/tailwind";
-import starlightOpenAPI, { openAPISidebarGroups } from "starlight-openapi"
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,24 +18,10 @@ export default defineConfig({
         replacesTitle: true,
       },
       plugins: [
-        starlightOpenAPI([
-          {
-            base: "api",
-            collapsed: false,
-            label: "API Reference",
-            schema: "./schema/swagger.yaml",
-
-          },
-        ]),
       ],
       sidebar: [
-        {
-          label: "Start Here",
-          items: [
-            { label: "Overview", link: "/" },
-          ]
-        },
-        ...openAPISidebarGroups,
+        { label: "Intro", link: "/" },
+        { label: "Devnet", items:[{ label: "Overview", link: "/devnet/using-the-devnet"}]},
         {
           label: "Examples",
           items: [
@@ -46,7 +31,7 @@ export default defineConfig({
           ]
         },
         {
-          label: "Core Concepts",
+          label: "Concepts",
           items: [
             { label: "What is Arweave?", link: "/core-concepts/what-is-arweave" },
             { label: "What is AO?", link: "/core-concepts/what-is-ao" },
@@ -54,17 +39,10 @@ export default defineConfig({
           ]
         },
       ],
-      social: {
-        discord: "https://discord.gg/yh4xsTUWUn",
-        github: "https://github.com/liteseed",
-        "x.com": "https://x.com/liteseed_xyz",
-      },
       title: "Liteseed"
     }),
-    tailwind({
-      applyBaseStyles: false
-    }),
   ],
+  vite: { plugins: [tailwindcss()] },
   output: "static",
   adapter: aws()
 });

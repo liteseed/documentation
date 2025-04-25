@@ -1,3 +1,47 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer base, starlight, theme, components, utilities;
+
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+
+:root {
+  --sl-content-width: 55rem;
+  --sl-text-5xl: 2.5rem;
+  --sl-text-4xl: 2rem;
+  --sl-text-3xl: 1.5rem;
+  --sl-text-2xl: 1.25rem;
+  --sl-text-xl: 1.1rem;
+  --sl-text-lg: 1rem;
+  --sl-text-md: 0.9rem;
+  --sl-text-sm: 0.875rem;
+
+}
+
+@theme {
+  --color-astronaut: #253368;
+  --color-brick: #ba2320;
+  --color-ebonyBlue: #14162f;
+  --color-gray98: #fafafa;
+  --color-mercury: #e5e5e5;
+  --color-turquoise: #70c5ca;
+  --color-zeus: #1d1814;
+  --color-amazon-green: #388054;
+  --color-malibu: #88cbf8;
+  --color-lavender: #ba8bf8;
+  --color-maize: #f6c15c;
+  --color-ghost-white: #f6f6f6;
+  --color-dark-cod-grey: #2c2c2c;
+}
+
+/* Add subtitle styles */
+.sl-markdown-content h1:first-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.sl-markdown-content h1:first-of-type + p {
+  font-size: var(--sl-text-xl);
+  color: var(--sl-color-text-2);
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
