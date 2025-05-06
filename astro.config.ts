@@ -25,7 +25,7 @@ export default defineConfig({
         {
           label: "Examples",
           items: [
-            { label: "Post data using @liteseed/sdk", link: "/examples/post-using-sdk" },
+            { label: "Quickstart using @liteseed/sdk", link: "/examples/quickstart-with-sdk" },
             { label: "Post signed data to Arweave", link: "/examples/post-signed-data-to-arweave" },
             { label: "Post a file to Arweave", link: "/examples/post-a-file" },
           ]
@@ -33,9 +33,9 @@ export default defineConfig({
         {
           label: "Concepts",
           items: [
-            { label: "What is Arweave?", link: "/core-concepts/what-is-arweave" },
-            { label: "What is AO?", link: "/core-concepts/what-is-ao" },
-            { label: "What is Liteseed Network?", link: "/core-concepts/what-is-liteseed" },
+            { label: "What is Arweave?", link: "/concepts/what-is-arweave" },
+            { label: "What is AO?", link: "/concepts/what-is-ao" },
+            { label: "What is Liteseed Network?", link: "/concepts/what-is-liteseed" },
           ]
         },
       ],

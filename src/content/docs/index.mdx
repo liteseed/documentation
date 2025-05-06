@@ -15,6 +15,66 @@ Where Liteseed comes in is that it allows you to upload large amounts of data to
 </div>
 ---
 
+## What is Arweave?
+Arweave is a blockchain for data storage. For a fee, you can make some data permanent. Essentially a bitcoin for data.
+For more information on Arweave, check out the [Arweave documentation](https://docs.arweave.org/developers/introduction).
+
+
+## Uploading Data using Liteseed
+Liteseed provides a REST API for uploading data to Arweave.
+You have two options for uploading data:
+
+### 1. Upload a file
+
+Uploading a file is simple send a `POST` Request to `/upload` endpoint.
+The expected body is a `FormData` which expects a key `"file"`.
+
+```bash
+curl -X POST \
+  http://api.liteseed.xyz/upload \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@/path/to/file'
+``` 
+After the file is uploaded, the API will return a `id` for the file.
+
+```json
+{ "id": "1234567890" }
+```
+
+You can use this `id` to fetch the file using the `GET /data` endpoint.
+And you can specify the `Mime-Type` to be the same as the original to fetch the file as the original file type.
+```bash
+curl -X GET \
+  http://api.liteseed.xyz/data/1234567890 \
+  -H 'Content-Type: application/json'
+  -H 'Mime-Type: application/octet-stream'
+``` 
+Your file is immediately available for download once the API returns.
+However, the file is not permanently stored on Arweave until the bundle is paid for.
+Files are stored for 10 blocks of Arweave on Liteseed Networks testnet.
+Once the bundle is paid for, the file is permanently stored on Arweave.
+To make the file permanently available, you can pay for the file using the `POST /payment` endpoint.
+
+```bash
+curl -X POST \
+  http://api.liteseed.xyz/payment/1234567890/ \
+  -H 'Content-Type: application/json' \
+  -d '{"payment_id": "2322323232323232"}'
+```
+
+
+### 2. Upload a data item
+
+To simplify the process of uploading data to Arweave, Liteseed provides a `Bundle` object.
+A bundle is a special object that contains data and metadata about the data.
+It is a special binary object that is used to upload data to Arweave.
+To simplify the process of creating a bundle we recommend using the [Liteseed SDK](https://github.com/liteseed/sdk-js).
+A tutorial on how to use the SDK is available [here](docs/examples/quickstart-with-sdk).
+If you want are interseted in the technical details of the bundle, you can read more [here](docs/core-concepts/what-is-a-bundle).
+
+
+
+
 
 ## Where to go from here?
 
