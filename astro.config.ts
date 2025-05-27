@@ -39,6 +39,12 @@ export default defineConfig({
           ]
         },
         {
+          label: "Comparisons", 
+          items: [
+            { label: "Liteseed vs. S3 Glacier", link: "/comparisons/liteseed-vs-s3-glacier" },
+          ]
+        },
+        {
           label: "References",
           items: [
             { label: "Glossary", link: "/references/glossary" },
