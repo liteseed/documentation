@@ -1,0 +1,26 @@
+---
+title: What Is an Arweave Bundle? (ANS-104)
+description: Learn how to bundle data-items to save on transaction fees and network overhead
+---
+
+## What Is an Arweave Bundle? (ANS-104)
+
+An **Arweave Bundle** is a single on-chain transaction that contains many individual **data-items**. Bundles let you group, upload, and retrieve multiple payloads in one go—saving on transaction fees and network overhead.
+
+### 1. Data-Items Recap  
+A **data-item** is the fundamental Arweave payload format. Each data-item consists of:  
+- A fixed‐length header (version, owner, target, anchor)  
+- A tag list (key/value metadata)  
+- The binary content (your file or JSON)  
+- A signature by the owner’s Arweave key  
+
+Individually, each data-item must be posted as its own transaction. Bundling lets you batch them.
+
+### 2. Why Bundle?  
+- **Lower Fees:** One transaction fee instead of _N_ fees for _N_ items.  
+- **Simpler Retrieval:** Fetch related items together.  
+- **Parallel Uploads:** Clients can pipeline many data-items then bundle at once.
+
+### 3. ANS-104 Bundle Format (v2)  
+A bundle is a binary blob structured as:
+

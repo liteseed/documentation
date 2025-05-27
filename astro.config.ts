@@ -35,6 +35,7 @@ export default defineConfig({
           items: [
             { label: "What is Arweave?", link: "/concepts/what-is-arweave" },
             { label: "What is ao?", link: "/concepts/what-is-ao" },
+            { label: "What is a Bundle?", link: "/concepts/what-is-a-bundle" },
             { label: "What is Liteseed Network?", link: "/concepts/what-is-liteseed" },
           ]
         },
