@@ -21,7 +21,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: "Intro", link: "/" },
-        { label: "Quickstart", link: "/quickstart/" },
+        { label: "Quickstart", link: "/quickstart" },
         // { label: "Devnet", items:[{ label: "Overview", link: "/devnet/using-the-devnet"}]},
         {
           label: "Examples",
