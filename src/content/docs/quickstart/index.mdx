@@ -1,0 +1,163 @@
+---
+title: Quickstart
+description: A step-by-step guide to sign, post, and pay for data-items using the Liteseed JavaScript SDK
+---
+
+import { Aside, Tabs, TabItem, Code, Steps } from '@astrojs/starlight/components';  
+
+<Aside title="TypeScript Guide">
+  All examples below are written in TypeScript.
+</Aside>
+
+<Aside type="caution" title="4 GB File Limit">
+  The Liteseed API is in beta. Individual uploads are capped at 4 GB.
+</Aside>
+
+
+## 1. File Upload
+
+<Steps>
+1. **Send your file**  
+   ```bash
+   curl -X POST https://api.liteseed.xyz/upload \
+     -H 'Content-Type: multipart/form-data' \
+     -F 'file=@/path/to/your/file'
+   ```
+
+2. **Receive an upload ID**
+
+   ```json
+   { "id": "1234567890" }
+   ```
+3. **Fetch your file** (available immediately, stored on Liteseed testnet for 10 blocks):
+
+   ```bash
+   curl -X GET https://api.liteseed.xyz/data/1234567890 \
+     -H 'Mime-Type: application/octet-stream'
+   ```
+4. **Finalize storage**
+   After reviewing, pay the bundle fee to commit your data permanently on Arweave:
+
+   ```bash
+   curl -X POST https://api.liteseed.xyz/payment/1234567890 \
+     -H 'Content-Type: application/json' \
+     -d '{ "payment_id": "2322323232323232" }'
+   ```
+</Steps>
+
+*Pricing is competitive and transparent; you only pay for the data you commit to Arweave.*
+
+---
+
+## 2. SDK (Data Bundles)
+
+### Prerequisites
+
+- Node.js ≥ 14  
+- An Arweave wallet keyfile (`.json`)  
+- Your project initialized with `npm init` or `yarn init`
+
+---
+<Steps>
+1. Install the SDK
+    <Tabs>
+        <TabItem label="npm">
+            <Code code="npm install @liteseed/sdk" lang="bash"/>
+        </TabItem>
+        <TabItem label="yarn">
+            <Code code="yarn add @liteseed/sdk" lang="bash"/>
+        </TabItem>
+        <TabItem label="pnpm">
+            <Code code="pnpm add @liteseed/sdk" lang="bash"/>
+        </TabItem>
+        <TabItem label="bun">
+            <Code code="bun add @liteseed/sdk" lang="bash"/>
+        </TabItem>
+    </Tabs>
+
+
+2. Load your Arweave key and instantiate Liteseed Client
+    ```ts
+    import { readFileSync } from 'fs';
+    import { Liteseed } from '@liteseed/sdk';
+
+    // Replace with your key path
+    const jwk = JSON.parse(readFileSync('./arweave-key.json', 'utf-8'));
+
+    const client = new Liteseed(jwk);
+    ```
+
+
+3. Sign Your Data - Convert any binary payload (images, JSON, logs, etc.) into a data-item:
+
+    ```ts
+    const fileBuffer = readFileSync('path/to/image.jpg');
+    const dataItem   = await client.signData({ data: fileBuffer });
+
+    console.log('✅ Data-item ID:', dataItem.id);
+    ```
+
+    <Aside type="tip" title="Gateway Compatibility">
+    The `dataItem.id` works with any Arweave gateway (e.g. `https://arweave.net/{id}`).
+    </Aside>
+
+
+4. Post & Pay in One Call - The SDK batches the posting of your signed data-item and the on-chain payment:
+    ```ts
+    const receipt = await client.postSignedData({ dataItem });
+    console.log('📜 Receipt:', receipt);
+
+    const paymentInfo = await client.sendPayment({ dataItem });
+    console.log('💸 Payment:', paymentInfo);
+    ```
+
+    * `receipt` contains your upload ID, cache endpoints, and deadline height.
+    * `paymentInfo` confirms the AR transaction ID finalizing permanent storage.
+
+    <Aside type="caution" title="Payment Window">
+    If payment doesn’t arrive within ~100 Arweave blocks (~20 minutes), you’ll need to re-post and pay again.
+    </Aside>
+
+5. Fetch Your Data - Once your bundle is finalized on Arweave, retrieve it via HTTP:
+    ```bash
+    curl https://api.liteseed.xyz/data/{uploadId} \
+    -H 'Accept: application/octet-stream' \
+    -o downloaded.jpg
+    ```
+
+</Steps>
+
+---
+## Full Example
+
+```ts
+import { readFileSync } from 'fs';
+import { Liteseed } from '@liteseed/sdk';
+
+async function main() {
+  // 1. Init client
+  const jwk    = JSON.parse(readFileSync('./arweave-key.json', 'utf-8'));
+  const client = new Liteseed(jwk);
+
+  // 2. Read file
+  const data = readFileSync('image.jpg');
+
+  // 3. Sign
+  const dataItem = await client.signData({ data });
+  console.log('Data-item ID:', dataItem.id);
+
+  // 4. Post & Pay
+  const receipt    = await client.postSignedData({ dataItem });
+  console.log('Receipt:', receipt);
+
+  const paymentTx  = await client.sendPayment({ dataItem });
+  console.log('Payment TX ID:', paymentTx.id);
+
+  console.log('🎉 Your data is now permanently stored on Arweave!');
+}
+
+main().catch(err => {
+  console.error('❌ Upload failed:', err);
+  process.exit(1);
+});
+```

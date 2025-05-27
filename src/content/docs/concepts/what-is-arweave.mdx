@@ -1,49 +1,45 @@
 ---
 title: What is Arweave?
-description: Dealing with data
+description: Unlock permanent, decentralized data storage
 ---
 
-<img src="https://ucarecdn.com/d87c44a0-05af-422a-8fa5-3dd8c547dc0f/arweave.png" alt="arweave"/>
+import { Aside } from '@astrojs/starlight/components';
 
-Arweave is a blockchain for data storage.
-For a fee, you can make some data permanent.
-Essentially a bitcoin for data.
+Arweave is a decentralized blockchain built for permanent data storage. By paying a one-time fee, you publish your data to a network of miners that store and replicate it indefinitely. Think of it as "Bitcoin for immutable information."
 
-# Why Permanent Storage?
-Permanent data storage has many applications including storage for a lot of humanities most important data.
-To get you started here are some applications listed below.
+## Why Permanent Storage?
 
-### A solution to link rot
-Link rot is the phenomenon where URLs stop working over time.
-The rate of link rot is still debated however it's important as it quantifies internet's ability to preserve information. 
-Estimates of that rate vary dramatically between studies. 
-Link rot could make important archival data disappear, potentially impacting the legal system and scholarship.
+Digital content can vanish over time—links break, servers retire and data disappears. Permanent storage addresses:
 
-:::note[Link Rot]
-Visit the wikipedia page on [Link Rot](https://en.wikipedia.org/wiki/Link_rot)
-:::
+* **Link Rot**: URLs decay and web pages vanish, threatening academic citations, legal records, and cultural archives.
+* **Data Integrity**: Immutable records ensure that once data is written, it cannot be altered or censored.
+* **Long-Term Access**: Scientific datasets, legal documents, and creative works remain accessible to future generations.
 
-### Storing private data
-Apps like [Ardrive](https://ardrive.io/) and [Akord](https://akord.com/) offer services that allow permanent storage of private data.
-Things like important documents and photos can easily be stored on these platforms.
+<Aside title="Link Rot">Learn more on [Wikipedia](https://en.wikipedia.org/wiki/Link_rot).</Aside>
 
-### Archiving code repositories
-[Protocol.Land](https://protocol.land/) offers the ability to archive important code repositories.
-This is especially useful in cases where projects are dependent on critical libraries whose history needs to be vetted.
+## Real-World Use Cases
 
+* **Private Archives**: Services like [ArDrive](https://ardrive.io/) let you store confidential documents and photos securely.
+* **Code Preservation**: Platforms such as [Protocol.Land](https://protocol.land/) archive critical software repositories and dependency histories.
+* **Cultural Heritage**: Museums and libraries can safeguard digital art, manuscripts, and historical records without risk of deletion.
 
-# How does permanent data work?
+## How Arweave’s Storage Model Works
 
-The protocol is secured by a network of miners, who store and replicate data for a reward of
-AR token.
-Transactions are priced using two components
-1. A highly conservative estimate of perpetual storage. These rewards are funded by a storage endowment model which are distributed over a period of time. 
-At a high level, this endowment mechanism quantifies the cost of permanent storage as a function of decreasing hard drive costs. 
-Looking at historic price decreases per GB of storage, it calculates a transaction price for storage of data. 
-In order for miners to store data, transaction cost should simply remain greater than cost of storage
-2. An instantly released transaction reward to incentivize miners to accept new transactions
+Arweave uses two pricing components to ensure data remains online indefinitely:
 
-This incentivizes network operators to keep as many copies of each data chunk as possible.
-This is a relatively high level overview of how storage data on Arweave works.
-To learn more in detail visit the arweave wiki page on [Storage Endowment](https://2hsfyi4t5fiqdcanybdez4e4admrjeqghts22viz7uuo3d5k2nna.arweave.net/0eRcI5PpUQGIDcBGTPCcANkUkgY85a1VGf0o7Y-q01o/#/en/storage-endowment)
+1. **Storage Endowment**
+   A conservative, long‑term estimate based on declining hardware costs funds a storage pool. That pool pays miners over time to keep data available.
+2. **Immediate Miner Reward**
+   A small, upfront token incentive encourages miners to add new data to their nodes quickly.
 
+Together, these mechanisms align miner incentives with the goal of permanent, reliable storage.
+
+For a deep dive into the economics, see Arweave’s [Storage Endowment guide](https://2hsfyi4t5fiqdcanybdez4e4admrjeqghts22viz7uuo3d5k2nna.arweave.net/0eRcI5PpUQGIDcBGTPCcANkUkgY85a1VGf0o7Y-q01o/#/en/storage-endowment).
+
+## Get Started
+
+Explore the Arweave developer docs and start publishing your first data transaction:
+
+* [Arweave Developer Introduction](https://docs.arweave.org/developers/introduction)
+* [Storage Endowment](https://docs.arweave.org/developers/storage-endowment)
+* [Permaweb Apps](https://docs.arweave.org/developers/permaweb-apps)

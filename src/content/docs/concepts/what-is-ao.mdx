@@ -1,0 +1,56 @@
+---
+
+title: What is AO?
+description: Decentralized compute powered by Arweave
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**AO** is a permissionless, decentralized compute platform built on Arweave. It runs across a network of distributed nodes, providing an environment where thousands of independent processes can execute in parallel.
+
+## Core Concepts
+
+### Actor-Oriented Model
+
+AO adopts an actor-oriented architecture inspired by Erlang:
+
+* **Actors**: Self-contained processes that maintain their own state and behavior.
+* **Message Passing**: Actors communicate exclusively via asynchronous messages—no shared memory—ensuring isolation and fault tolerance.
+* **Dynamic Scaling**: Actors can spawn new actors on demand, allowing your workloads to expand seamlessly under load.
+
+This model eliminates memory contention and supports fine-grained concurrency, so computations scale with the network.
+
+### Holographic State & Consensus
+
+Unlike blockchains that reach consensus on global state, AO uses a holographic state mechanism:
+
+1. **Immutable Log Storage**
+   All actor interactions are recorded as logs on Arweave, guaranteeing permanence and auditability.
+2. **Local State Reconstruction**
+   Nodes reconstruct actor state from the shared log, avoiding expensive global state machine consensus.
+
+This approach reduces on-chain processing, improves throughput, and leverages Arweave’s permanent archive as a trust layer.
+
+<Aside title="Learn More about AO">
+Explore the full technical spec and tutorials in the [AO documentation](https://5z7leszqicjtb6bjtij34ipnwjcwk3owtp7szjirboxmwudpd2tq.arweave.net/7n6ySzBAkzD4KZoTviHtskVlbdab_yylEQuuy1BvHqc).
+</Aside>
+
+## Getting Started
+
+1. **Install the CLI**
+
+   ```bash
+   npm install -g ao-cli
+   ```
+2. **Deploy Your First Actor**
+
+   ```bash
+   ao deploy --file myActor.js
+   ```
+3. **Invoke an Actor Method**
+
+   ```bash
+   ao call --actor <actor-id> --method processData --input data.json
+   ```
+
+Continue to the [Quickstart Guide](/docs/quickstart) for a hands-on tutorial and code samples.

@@ -21,13 +21,13 @@ export default defineConfig({
       ],
       sidebar: [
         { label: "Intro", link: "/" },
+        { label: "Quickstart", link: "/quickstart/" },
         // { label: "Devnet", items:[{ label: "Overview", link: "/devnet/using-the-devnet"}]},
         {
           label: "Examples",
           items: [
-            { label: "Quickstart using @liteseed/sdk", link: "/examples/quickstart-with-sdk" },
+            { label: "Post a File", link: "/examples/post-a-file" },
             { label: "Post signed data to Arweave", link: "/examples/post-signed-data-to-arweave" },
-            { label: "Post a file to Arweave", link: "/examples/post-a-file" },
           ]
         },
         {
@@ -36,6 +36,12 @@ export default defineConfig({
             { label: "What is Arweave?", link: "/concepts/what-is-arweave" },
             { label: "What is AO?", link: "/concepts/what-is-ao" },
             { label: "What is Liteseed Network?", link: "/concepts/what-is-liteseed" },
+          ]
+        },
+        {
+          label: "References",
+          items: [
+            { label: "Glossary", link: "/references/glossary" },
           ]
         },
       ],

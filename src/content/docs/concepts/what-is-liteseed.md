@@ -1,37 +1,38 @@
 ---
+
 title: What is Liteseed?
-description: A decentralized network of bundlers powered by AO.
+description: A decentralized bundler network for efficient Arweave uploads
 ---
+
 ## Data Items & Bundles
 
-Arweave supports transactions of two types transfer of AR and data uploads.
+Arweave supports two transaction types:
 
-![An arweave transaction](https://ucarecdn.com/ffe24af7-4b6c-4bcf-85e7-dfc4c52f0036/arweavetransaction6.png)
+* **AR Transfers**: Sending AR tokens between wallets
+* **Data Uploads**: Storing files on the network
 
+Uploading many small files individually creates separate transactions for each, which increases fees and network congestion. The Arweave ecosystem addresses this with **Data Items** and **Bundles**:
 
-When you need to upload a large amount of files onto Arweave, separate transactions increase number of transactions
-which increase gas cost for everyone.
-A natural solution is to wrap multiple files into a single transaction.
-The Arweave ecosystem has a special standardised formats which is a data-item and a bundle.
-Each file is converted into a data-item, and many data-items are joined together to form a bundle.
-To post data-items to arweave an intermediary software is required which is called a bundler.
+* **Data Item**: A standardized unit containing file data and metadata
+* **Bundle**: A container that groups multiple Data Items into a single transaction
 
-[ANS-104: Bundled Data](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md) describes data-items & bundles in detail.
+![Arweave transaction](https://ucarecdn.com/ffe24af7-4b6c-4bcf-85e7-dfc4c52f0036/arweavetransaction6.png)
 
-![A bundled transaction](https://ucarecdn.com/4e17c0c6-4a74-4337-b38e-b9bcc3a24a81/bundledarweavetransaction3.png)
+Bundling cuts per-file overhead and reduces total gas costs. For the full specification, see [ANS-104: Bundled Data](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md).
 
-##  Liteseed Network - A Network of bundlers
+![Bundled transaction](https://ucarecdn.com/4e17c0c6-4a74-4337-b38e-b9bcc3a24a81/bundledarweavetransaction3.png)
 
-The requirement of bundlers introduced a requirement of services to upload bundles.
-However, relying on a single bundler service introduces centralization with the additional challenge of scale.
-Liteseed Network addresses these issues by creating a network of bundlers to upload data onto Arweave.
+## Liteseed Network
 
-### How does it work?
+Running your own bundler can be complex, and relying on a single service creates centralization and scaling risks. The **Liteseed Network** solves this by coordinating a decentralized mesh of bundlers powered by AO.
 
-The network works by creating a governance structure.
-Each bundler in the network is required to stake tokens on an ao smart contract.
-When an upload is sent to the network a bundler is selected.
-If the bundler posts the data on time it receives the upload reward and some additional liteseed tokens.
-In case the bundler fails to post the data it can lose its token stake.
+### Governance & Incentives
 
-![Liteseed Network](https://ucarecdn.com/d91f67cb-7d4c-4903-a06a-5d11da7571ce/liteseedarweavetransaction1.png)
+1. **Stake**: Operators deposit tokens into an AO smart contract to join the network
+2. **Assign**: Bundlers are selected based on stake weight and uptime when you submit a bundle
+3. **Reward**: Successful uploads earn the bundler the transaction fee plus a Liteseed token bonus
+4. **Slash**: Bundlers that miss deadlines lose a portion of their stake, enforcing reliability
+
+![Liteseed Network architecture](https://ucarecdn.com/d91f67cb-7d4c-4903-a06a-5d11da7571ce/liteseedarweavetransaction1.png)
+
+By decentralizing bundler services, Liteseed ensures high availability, competitive pricing, and trustless operation.

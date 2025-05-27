@@ -1,103 +1,140 @@
 ---
-title: Post a File
-description: This example demonstrates saving and querying data using Liteseed
+title: Upload a File
+description: Save and retrieve files using Liteseed’s REST API
 ---
-
-This is a simple example in javascript. 
-It shows saving and fetching an image on Arweave using Liteseed API.
 
 import { Aside } from '@astrojs/starlight/components';
 
-<Aside type="caution" title="4GB File Size Limit!">
-  The API is currently in beta so file upload size limit is set to 4GB.
+<Aside type="caution" title="4 GB File Size Limit">
+  Because the API is currently in beta, uploads are capped at 4 GB per file.
 </Aside>
 
-## Save an Image
+## Overview
 
-For this example we'll use the image below and save it on Arweave.
+This Node.js example shows how to:
 
-<img src={"https://api.liteseed.xyz/tx/UUxsGfZ76nNaeSSiHFmY3Shqlsx5OJXRYc2gYrTnWTU/data?mime-type=\"image/jpeg\""} alt={"file.jpg"} />
+1. POST a file to Liteseed  
+2. Query the Arweave storage price  
+3. Pay a blockchain transaction to finalize permanent storage  
+4. Download the file once it’s live on Arweave  
 
-## Installing the required packages
+You’ll need an Arweave wallet key (JWK) and Node.js v14+.
 
-This tutorial requires some packages to make uploading data easier.
+---
 
-```shell
-npm install arweave
-```
+## 1. Install Dependencies
 
-## Send the Request
+```bash
+npm install arweave form-data node-fetch
+````
 
-Uploading a file is simple send a `POST` Request to `/data` endpoint.
-The expected body is a `FormData` which expects a key `"file"`.
+> **Note:** In Node 18+ you can skip `node-fetch` since `fetch` is built-in.
+
+---
+
+## 2. Upload & Pay
 
 ```js
+// upload-file.js
 
-import {readFileSync} from "fs";
-import Arweave from "arweave";
+import fs from 'fs';
+import Arweave from 'arweave';
+import FormData from 'form-data';
+import fetch from 'node-fetch';  // Skip if using Node 18+
 
-/**
- * @param {number} size
- * @param {any} jwk
- * @param {Arweave} arweave
- */
-async function sendPaymentTransaction(size, jwk, arweave) {
-    const response = await fetch(`https://api.liteseed.xyz/price/${size}`);
-    const {price, address} = await response.json();
-    console.log("Price in AR", price); // Price of upload
-    console.log("Address to pay", address); // The wallet to pay
-    const tx = await arweave.createTransaction({quantity: price, target: address}, jwk);
-    await arweave.transactions.sign(tx, jwk);
-    await arweave.transactions.post(tx);
-    console.log("Transaction Id", tx.id);
-    return tx;
+// ——— CONFIG ———
+const API_BASE = 'https://api.liteseed.xyz';
+const KEY_PATH = './keyfile.json';
+const FILE_PATH = './image.jpg';
+
+// ——— HELPERS ———
+
+// 1️⃣ POST the file to Liteseed
+async function postFile(fileBuffer) {
+  const form = new FormData();
+  form.append('file', fileBuffer, { filename: 'image.jpg' });
+
+  const res = await fetch(`${API_BASE}/data`, {
+    method: 'POST',
+    body: form
+  });
+  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+  return res.json();  // { id, dataCaches, ... }
 }
 
-/**
- * @param file {File}
- * @param size {number}
- * @returns {Promise<{id: string; owner: string; dataCaches: string[]; fastFinalityIndexes: string[]; version: string; deadlineHeight: number;}>}
- */
-async function postData(file, size) {
-    const body = new FormData();
-    body.append("file", file);
-    body.append("tags[]", "image");
-    body.append("tags[]", "image/jpeg");
-    const response = await fetch(`https://api.liteseed.xyz/data`, {
-        method: "POST",
-        body,
-        headers: {"content-length": size.toString(), "content-type": "application/octet-stream"}
-    });
-    const receipt = await response.json();
-    console.log("Receipt", receipt);
-    return receipt;
+// 2️⃣ GET price and payment address
+async function getPrice(size) {
+  const res = await fetch(`${API_BASE}/price/${size}`);
+  if (!res.ok) throw new Error(`Price lookup failed`);
+  return res.json();  // { price: '0.0001234', address: '...' }
 }
 
-/**
- *
- * @param id {string}
- * @param paymentId {string}
- * @returns {Promise<any>}
- */
-async function updatePaymentId(id, paymentId) {
-    const response = await fetch(`https://api.liteseed.xyz/tx/${id}/${paymentId}`, {method: "PUT"});
-    const payment = await response.json();
-    console.log("Payment", payment);
+// 3️⃣ PAY on Arweave
+async function payOnArweave(price, address, jwk) {
+  const ar = Arweave.init({ host: 'arweave.net', protocol: 'https' });
+  const tx = await ar.createTransaction({ target: address, quantity: price }, jwk);
+  await ar.transactions.sign(tx, jwk);
+  const res = await ar.transactions.post(tx);
+  if (res.status !== 200) throw new Error(`Arweave payment failed: ${res.status}`);
+  return tx.id;
 }
 
-async function uploadFile() {
-    const file = readFileSync("file.jpeg"); // The file to upload
-    const jwk = JSON.parse(readFileSync("./keyfile.json").toString());
-    const arweave = Arweave.init({
-        host: "arweave.net",
-        protocol: "https"
-    });
-
-    const size = file.size;
-    const receipt = await postData(file, size);
-    const tx = await sendPaymentTransaction(size, jwk, arweave);
-    await updatePaymentId(receipt.id, tx.id);
+// 4️⃣ UPDATE Liteseed with paymentId
+async function confirmPayment(uploadId, paymentId) {
+  const res = await fetch(`${API_BASE}/tx/${uploadId}/${paymentId}`, { method: 'PUT' });
+  if (!res.ok) throw new Error(`Confirmation failed`);
+  return res.json();
 }
 
-uploadFile().then(() => console.log("success"));
+// ——— MAIN FLOW ———
+(async () => {
+  try {
+    const fileBuffer = fs.readFileSync(FILE_PATH);
+    const jwk = JSON.parse(fs.readFileSync(KEY_PATH, 'utf-8'));
+    const size = fileBuffer.length;
+    
+    console.log('Uploading file…');
+    const { id: uploadId } = await postFile(fileBuffer);
+    console.log(`✔️  Upload ID: ${uploadId}`);
+
+    console.log('Fetching price…');
+    const { price, address } = await getPrice(size);
+    console.log(`Price: ${price} AR to ${address}`);
+
+    console.log('Paying on Arweave…');
+    const paymentId = await payOnArweave(price, address, jwk);
+    console.log(`✔️  Payment TX ID: ${paymentId}`);
+
+    console.log('Confirming with Liteseed…');
+    await confirmPayment(uploadId, paymentId);
+    console.log('🎉 File is now permanently stored on Arweave!');
+  } catch (err) {
+    console.error(err);
+  }
+})();
 ```
+
+---
+
+## 3. Download Your File
+
+Once your bundle is live on Arweave (usually within a few blocks), fetch it directly:
+
+```bash
+curl https://api.liteseed.xyz/data/<UploadID> \
+  -H 'Mime-Type: image/jpeg' \
+  -o downloaded.jpg
+```
+
+---
+
+### What’s Happening?
+
+* **POST /data**
+  Uploads your file to Liteseed’s staging layer.
+* **GET /price/\:size**
+  Returns how much AR you need and where to send it.
+* **PUT /tx/\:uploadId/\:paymentId**
+  Tells Liteseed to bundle your payment and push everything on-chain.
+
+This pattern works for any file type—just adjust the `Mime-Type` when you download.
