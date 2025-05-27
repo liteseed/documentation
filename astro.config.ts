@@ -34,7 +34,7 @@ export default defineConfig({
           label: "Concepts",
           items: [
             { label: "What is Arweave?", link: "/concepts/what-is-arweave" },
-            { label: "What is AO?", link: "/concepts/what-is-ao" },
+            { label: "What is ao?", link: "/concepts/what-is-ao" },
             { label: "What is Liteseed Network?", link: "/concepts/what-is-liteseed" },
           ]
         },
@@ -42,6 +42,7 @@ export default defineConfig({
           label: "Comparisons", 
           items: [
             { label: "Liteseed vs. S3 Glacier", link: "/comparisons/liteseed-vs-s3-glacier" },
+            { label: "Liteseed vs. Backblaze B2", link: "/comparisons/liteseed-vs-backblaze-b2" },
           ]
         },
         {

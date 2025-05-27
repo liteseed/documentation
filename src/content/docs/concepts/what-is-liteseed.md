@@ -24,11 +24,11 @@ Bundling cuts per-file overhead and reduces total gas costs. For the full specif
 
 ## Liteseed Network
 
-Running your own bundler can be complex, and relying on a single service creates centralization and scaling risks. The **Liteseed Network** solves this by coordinating a decentralized mesh of bundlers powered by AO.
+Running your own bundler can be complex, and relying on a single service creates centralization and scaling risks. The **Liteseed Network** solves this by coordinating a decentralized mesh of bundlers powered by ao.
 
 ### Governance & Incentives
 
-1. **Stake**: Operators deposit tokens into an AO smart contract to join the network
+1. **Stake**: Operators deposit tokens into an ao smart contract to join the network
 2. **Assign**: Bundlers are selected based on stake weight and uptime when you submit a bundle
 3. **Reward**: Successful uploads earn the bundler the transaction fee plus a Liteseed token bonus
 4. **Slash**: Bundlers that miss deadlines lose a portion of their stake, enforcing reliability

@@ -4,13 +4,13 @@ title: Glossary
 description: Key terms and definitions for Liteseed and Arweave
 ---
 
-## AO
+## ao
 
 A decentralized compute platform built on Arweave that uses an actor-oriented model and holographic state to execute parallel processes.
 
 ## Actor
 
-A self-contained process in AO that maintains its own state and communicates with other actors via asynchronous message passing.
+A self-contained process in ao that maintains its own state and communicates with other actors via asynchronous message passing.
 
 ## AR
 
@@ -34,11 +34,11 @@ A standardized unit of file data and metadata defined by ANS-104, representing o
 
 ## Holographic State
 
-AO’s consensus mechanism where all actor interactions are logged on Arweave and each node reconstructs state locally from those logs.
+ao’s consensus mechanism where all actor interactions are logged on Arweave and each node reconstructs state locally from those logs.
 
 ## Liteseed Network
 
-A decentralized network of bundlers coordinated via an AO governance contract, designed to distribute upload load and ensure reliability.
+A decentralized network of bundlers coordinated via an ao governance contract, designed to distribute upload load and ensure reliability.
 
 ## Liteseed Token
 
@@ -58,7 +58,7 @@ A penalty mechanism where part of a bundler’s stake is seized if it fails to u
 
 ## Stake
 
-Tokens deposited by a bundler into an AO smart contract as collateral to participate in the Liteseed Network; higher stakes increase selection probability.
+Tokens deposited by a bundler into an ao smart contract as collateral to participate in the Liteseed Network; higher stakes increase selection probability.
 
 ## Storage Endowment
 

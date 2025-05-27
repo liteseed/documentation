@@ -1,0 +1,63 @@
+---
+title: Liteseed vs Backblaze B2
+description: Comparing Liteseed Network and Backblaze B2 for long-term and cold storage
+---
+
+## Overview
+
+Both Liteseed Network and Backblaze B2 (including their low-cost archival tier) offer affordable, durable storage—but they differ in pricing model, retrieval, decentralization, and lock-in.
+
+| Feature                | Liteseed Network                           | Backblaze B2                               |
+|------------------------|--------------------------------------------|--------------------------------------------|
+| **Pricing Model**      | One-time, up-front fee for permanent storage on Arweave | Pay-as-you-go monthly storage ($0.005/GB-month), plus egress and request fees |
+| **Retrieval Cost**     | No extra fees; data served via any gateway | $0.01/GB for downloads; free first 1 GB each day |
+| **Retrieval Speed**    | Instant via global Arweave gateways        | Instant via HTTP/S3-compatible API         |
+| **Durability**         | Decentralized replication across many nodes, immutable once committed | 11 nines durability across Backblaze’s data centers |
+| **Decentralization**   | Censorship-resistant, open-standard bundles on Arweave | Centralized under Backblaze’s infrastructure |
+| **Vendor Lock-In**     | Open standards (ANS-104), any gateway can serve your data | Proprietary B2 API, egress charges apply when migrating |
+| **Use Cases**          | Legal archives, scientific datasets, digital art, NFTs—data that must remain unchanged forever | General backups, media archives, bulk-storage for application data |
+
+---
+
+## In Depth
+
+### 1. Pricing Model
+
+- **Liteseed**  
+  Pay once to commit data permanently. No ongoing bills, no hidden renewal fees.  
+- **Backblaze B2**  
+  $0.005 per GB per month. You pay each month for stored data plus $0.01 per GB for downloads and $0.004 per 10,000 API calls.
+
+### 2. Retrieval
+
+- **Liteseed**  
+  Fetch data via any Arweave gateway with standard HTTP requests. No retrieval tiering or extra charges.  
+- **Backblaze B2**  
+  Immediate downloads via HTTP or S3 API. Fees apply per GB retrieved, with a small free daily allowance.
+
+### 3. Durability & Redundancy
+
+- **Liteseed**  
+  Data is bundled and anchored on Arweave’s decentralized network. Copies exist on every participating node, ensuring immutability and censorship resistance.  
+- **Backblaze B2**  
+  Data is stored redundantly across multiple AWS-equivalent data centers, offering high durability but within a single vendor’s domain.
+
+### 4. Vendor Neutrality
+
+- **Liteseed**  
+  Uses open “data-item” and bundle standards. You hold your own keys and metadata, and any gateway (e.g. `arweave.net`) can serve your files.  
+- **Backblaze B2**  
+  Uses a proprietary API. You can access data via S3-compatible endpoints, but transferring large archives out incurs egress fees.
+
+### 5. Ideal Use Cases
+
+- **Choose Liteseed when you need**  
+  - True permanent archival with no ongoing cost  
+  - Censorship-resistant or immutable storage  
+  - Open-standard bundles and full control of keys  
+- **Choose Backblaze B2 when you need**  
+  - Flexible, low-cost cloud storage with predictable monthly billing  
+  - Frequent or unpredictable retrieval patterns  
+  - Integration with existing S3-compatible tools
+
+---
