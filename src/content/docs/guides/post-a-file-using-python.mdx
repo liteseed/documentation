@@ -1,0 +1,112 @@
+---
+title: Upload a File (Python)
+description: Save and retrieve files using Liteseed’s REST API in Python
+---
+
+import { Aside, Steps, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="4 GB File Size Limit">
+  Because the API is currently in beta, uploads are capped at 4 GB per file.
+</Aside>
+
+## Overview
+
+This Python example shows how to:
+
+1. POST a file to Liteseed  
+2. Query the Arweave storage price  
+3. Pay an Arweave transaction to finalize permanent storage  
+4. Download the file once it’s live on Arweave  
+
+You’ll need your Arweave wallet JWK and Python 3.8+.
+
+---
+
+## 1. Install Dependencies
+
+```bash
+pip install requests arweave-python-client
+````
+
+> **Note:** `arweave-python-client` handles signing & submitting Arweave transactions.
+
+---
+
+<Steps>
+1. **Read your file & wallet**  
+2. **Upload to Liteseed**  
+3. **Fetch price & pay on Arweave**  
+4. **Confirm payment with Liteseed**  
+</Steps>
+
+---
+
+## 2. Upload, Pay & Confirm
+
+```python
+import json
+import requests
+from arweave import Wallet, Transaction
+
+API_BASE = 'https://api.liteseed.xyz'
+KEY_PATH = 'arweave-key.json'
+FILE_PATH = 'image.jpg'
+
+# 1️⃣ Load wallet and file
+wallet = Wallet(KEY_PATH)
+with open(FILE_PATH, 'rb') as f:
+    file_bytes = f.read()
+
+# 2️⃣ Upload to Liteseed staging
+resp = requests.post(
+    f"{API_BASE}/data",
+    files={'file': (FILE_PATH, file_bytes)},
+)
+resp.raise_for_status()
+upload_id = resp.json()['id']
+print(f"✔️  Upload ID: {upload_id}")
+
+# 3️⃣ Get price and address
+size = len(file_bytes)
+resp = requests.get(f"{API_BASE}/price/{size}")
+resp.raise_for_status()
+price, address = resp.json()['price'], resp.json()['address']
+print(f"Price: {price} AR  →  {address}")
+
+# 4️⃣ Create & send Arweave payment
+tx = Transaction(wallet, target=address, quantity=str(price))
+tx.sign()
+tx.send()
+payment_id = tx.id
+print(f"✔️  Payment TX ID: {payment_id}")
+
+# 5️⃣ Confirm with Liteseed
+resp = requests.put(f"{API_BASE}/tx/{upload_id}/{payment_id}")
+resp.raise_for_status()
+print("🎉 File is now permanently stored on Arweave!")
+```
+
+---
+
+## 3. Download Your File
+
+After a few blocks, fetch it via HTTP:
+
+```bash
+curl https://api.liteseed.xyz/data/<UploadID> \
+  -H 'Accept: application/octet-stream' \
+  -o downloaded.jpg
+```
+
+---
+
+### What’s Happening?
+
+* **POST /data**
+  Uploads your file to Liteseed’s staging layer.
+* **GET /price/\:size**
+  Returns the AR fee and target address.
+* **Arweave Transaction**
+  Signs & sends an on-chain transaction to pay the fee.
+* **PUT /tx/\:uploadId/\:paymentId**
+  Notifies Liteseed to bundle and commit your upload permanently.

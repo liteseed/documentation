@@ -1,0 +1,105 @@
+---
+title: Pricing Model
+description: Understand Liteseed’s one-time, pay-once pricing for permanent Arweave storage
+---
+
+import { Aside, Code } from '@astrojs/starlight/components';
+
+Liteseed’s pricing is built around a **one-time endowment fee** that covers storage forever—no renewals, no subscriptions, just a single payment that locks in your data on Arweave for good.
+
+## How It Works
+
+1. **Per-byte Pricing**  
+   Liteseed calculates the exact Arweave fee required to store your payload size (in bytes).  
+2. **One-Time Payment**  
+   You pay the returned fee once, and your data is guaranteed to remain on-chain indefinitely.  
+3. **Transparent Formula**  
+   The fee is derived from Arweave’s storage endowment model, which projects hardware cost declines over decades.
+
+<Aside title="Pricing Endpoint">
+Retrieve your precise fee for any payload size:
+```bash
+curl https://api.liteseed.xyz/price/{bytes}
+````
+
+Response:
+
+```json
+{
+  "price": "1000000000000",
+  "address": "Cbj95zD…9Ek"
+}
+```
+
+</Aside>
+
+## Endowment-Based Fee Calculation
+
+Arweave uses a two-part reward mechanism:
+
+* **Storage Endowment**
+  A conservative, long-term estimate (in AR) based on historical decline in hard-drive costs. This creates a fund that pays miners small amounts over time to keep your data online.
+* **Immediate Reward**
+  A small upfront bonus paid to miners to incentivize quick inclusion of your transaction.
+
+Liteseed’s `/price/{bytes}` endpoint combines these into a single AR amount:
+
+```
+fee = endowment(bytes) + immediateReward(bytes)
+```
+
+> Both components factor in network parameters like current AR price, total network storage, and average miner rewards.
+
+## Why Pay Once?
+
+| Liteseed (One-Time)                     | Traditional Cloud (Recurring)             |
+| --------------------------------------- | ----------------------------------------- |
+| Single AR payment, permanent archival   | Monthly/annual storage and retrieval fees |
+| No “cold” vs. “expedited” tiers         | Variable access cost tiers                |
+| Immutable, decentralized redundancy     | Centralized datacenter operations         |
+| Predictable—fee never changes after pay | Costs grow with data and time             |
+
+<Aside type="caution" title="No Hidden Fees">
+Your one-time fee covers **all future** storage and replication costs. You won’t be billed again—ever.
+</Aside>
+
+## Cost Examples
+
+* **1 MB file (1 048 576 bytes)**
+
+  ```bash
+  curl https://api.liteseed.xyz/price/1048576
+  # → { "price": "150000000000", … }
+  ```
+
+  You’d pay **0.00015 AR** up front for permanent storage of that file.
+
+* **1 GB archive (1 073 741 824 bytes)**
+
+  ```bash
+  curl https://api.liteseed.xyz/price/1073741824
+  # → { "price": "200000000000000", … }
+  ```
+
+  You’d pay **0.2 AR** once to lock in 1 GB forever.
+
+## Integrations
+
+* **REST API**: `/price/{bytes}`
+* **CLI**:
+
+  ```bash
+  liteseed price 1048576
+  ```
+* **SDK**:
+
+  ```ts
+  const { price, address } = await client.getPrice(1048576);
+  ```
+
+## Next Steps
+
+* See our [Quickstart](/quickstart/) to upload, pay, and confirm your first file in under 5 minutes.
+* Compare to recurring-fee services in our [Liteseed vs. S3 Glacier](../comparisons/s3-glacier) guide.
+* Dive deeper into Arweave’s economic model: [Storage Endowment](https://docs.arweave.org/developers/storage-endowment).
+

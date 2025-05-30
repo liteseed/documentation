@@ -1,0 +1,187 @@
+---
+title: Upload a File (Go)
+description: Save and retrieve files using Liteseed’s REST API in Go with the `liteseed/goar` client
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="4 GB File Size Limit">
+  The API is in beta; uploads are capped at 4 GB per file.
+</Aside>
+
+## Overview
+
+This Go example shows how to:
+
+1. POST a file to Liteseed  
+2. Query the storage fee  
+3. Create, sign & submit an Arweave payment transaction  
+4. Confirm the payment with Liteseed  
+
+You’ll need Go ≥ 1.18, the `github.com/liteseed/goar` client, and your Arweave JWK.
+
+---
+
+## 1. Install Dependencies
+
+```bash
+go get github.com/liteseed/goar
+go get github.com/liteseed/goar/types
+````
+
+---
+
+<Steps>
+1. **Load wallet & file**  
+2. **Upload to Liteseed staging**  
+3. **Fetch price & payment address**  
+4. **Sign & send AR payment**  
+5. **Notify Liteseed of payment**  
+</Steps>
+
+---
+
+## 2. Upload, Pay & Confirm
+
+```go
+package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "fmt"
+  "io"
+  "mime/multipart"
+  "net/http"
+  "os"
+  "path/filepath"
+
+  goar "github.com/liteseed/goar"
+  "github.com/liteseed/goar/types"
+)
+
+const (
+  apiBase  = "https://api.liteseed.xyz"
+  keyPath  = "arweave-key.json"
+  filePath = "image.jpg"
+)
+
+// PriceResp holds the /price response
+type PriceResp struct {
+  Price   string `json:"price"`
+  Address string `json:"address"`
+}
+
+func main() {
+  // 1️⃣ Load wallet and file
+  wallet, err := goar.NewWalletFromFile(keyPath)
+  if err != nil {
+    panic(err)
+  }
+  data, err := os.ReadFile(filePath)
+  if err != nil {
+    panic(err)
+  }
+
+  // 2️⃣ Upload to Liteseed staging
+  uploadID := uploadFile(data)
+  fmt.Println("✔️ Upload ID:", uploadID)
+
+  // 3️⃣ Fetch price and address
+  p := getPrice(len(data))
+  fmt.Printf("Price: %s AR → %s\n", p.Price, p.Address)
+
+  // 4️⃣ Create & send Arweave payment
+  txID := payOnArweave(p.Price, p.Address, wallet)
+  fmt.Println("✔️ Payment TX ID:", txID)
+
+  // 5️⃣ Confirm with Liteseed
+  confirmPayment(uploadID, txID)
+  fmt.Println("🎉 File stored permanently on Arweave!")
+}
+
+func uploadFile(data []byte) string {
+  buf := &bytes.Buffer{}
+  mw := multipart.NewWriter(buf)
+  fw, _ := mw.CreateFormFile("file", filepath.Base(filePath))
+  fw.Write(data)
+  mw.Close()
+
+  req, _ := http.NewRequest("POST", apiBase+"/data", buf)
+  req.Header.Set("Content-Type", mw.FormDataContentType())
+  res, err := http.DefaultClient.Do(req)
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+
+  if res.StatusCode != http.StatusOK {
+    body, _ := io.ReadAll(res.Body)
+    panic("upload failed: " + string(body))
+  }
+  var out struct{ ID string `json:"id"` }
+  json.NewDecoder(res.Body).Decode(&out)
+  return out.ID
+}
+
+func getPrice(size int) PriceResp {
+  res, err := http.Get(fmt.Sprintf("%s/price/%d", apiBase, size))
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+  var p PriceResp
+  json.NewDecoder(res.Body).Decode(&p)
+  return p
+}
+
+func payOnArweave(price, target string, jwk *types.JWK) string {
+  txOpts := &types.TxOptions{Target: target, Quantity: price}
+  tx, err := types.NewCreateTransaction([]byte{}, txOpts, jwk)
+  if err != nil {
+    panic(err)
+  }
+  if err := goar.SignTransaction(tx, jwk); err != nil {
+    panic(err)
+  }
+  client := goar.NewClient("https://arweave.net:443")
+  if _, err := client.SendTransaction(tx); err != nil {
+    panic(err)
+  }
+  return tx.ID
+}
+
+func confirmPayment(uploadID, paymentID string) {
+  url := fmt.Sprintf("%s/tx/%s/%s", apiBase, uploadID, paymentID)
+  req, _ := http.NewRequest("PUT", url, nil)
+  res, err := http.DefaultClient.Do(req)
+  if err != nil {
+    panic(err)
+  }
+  defer res.Body.Close()
+  if res.StatusCode != http.StatusOK {
+    buf, _ := io.ReadAll(res.Body)
+    panic("confirmation failed: " + string(buf))
+  }
+}
+```
+
+---
+
+## 3. Download Your File
+
+```bash
+curl https://api.liteseed.xyz/data/<UploadID> \
+  -H 'Accept: application/octet-stream' \
+  -o downloaded.jpg
+```
+
+---
+
+### How It Works
+
+* **POST /data**: Stage your file in Liteseed.
+* **GET /price/\:size**: Obtain the AR fee & target address.
+* **Arweave TX**: Sign & send an on-chain transaction to pay the fee.
+* **PUT /tx/\:uploadId/\:paymentId**: Trigger on-chain bundling of your data.
+

@@ -1,0 +1,73 @@
+---
+title: CI Upload with GitHub Actions
+description: Automatically archive your build artifacts to Liteseed on every release
+---
+
+import { Steps, Code } from '@astrojs/starlight/components';
+
+<Steps>
+1. **Configure Secrets**  
+   Store your Arweave JWK as `ARWEAVE_KEY` and Liteseed API key as `LITESEED_API_KEY` in GitHub Secrets.  
+2. **Checkout & Download**  
+   Use `actions/checkout` and `softprops/action-gh-release` to grab your release artifact.  
+3. **Upload to Liteseed**  
+   `curl` posts the file to Liteseed’s staging endpoint and returns an upload ID.  
+4. **Pay on Arweave**  
+   Fetch the AR fee, sign & send an Arweave transaction using the `arweave` CLI.  
+5. **Confirm Payment**  
+   `curl` PUTs the payment TX ID back to Liteseed to finalize the on-chain bundle.  
+</Steps>
+
+## Workflow Definition
+
+<Code code={`
+# .github/workflows/upload-release.yml
+name: Upload Release Artifact to Liteseed
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/app.zip
+
+      - name: Upload to Liteseed staging
+        env:
+          LITESEED_API_KEY: \${{ secrets.LITESEED_API_KEY }}
+        run: |
+          echo "Uploading artifact..."
+          UPLOAD_ID=$(curl -s -X POST https://api.liteseed.xyz/data \\
+            -H "Authorization: Bearer \$LITESEED_API_KEY" \\
+            -F file=@dist/app.zip | jq -r .id)
+          echo "Upload ID: \$UPLOAD_ID"
+
+      - name: Fetch price & pay on Arweave
+        env:
+          ARWEAVE_KEY: \${{ secrets.ARWEAVE_KEY }}
+        run: |
+          SIZE=$(stat -c%s dist/app.zip)
+          read PRICE ADDRESS <<<\$(curl -s https://api.liteseed.xyz/price/\$SIZE | jq -r '.price, .address')
+          echo "Paying \$PRICE AR to \$ADDRESS..."
+          TX_ID=$(echo "\$ARWEAVE_KEY" | arweave create-transaction \\
+            --target \$ADDRESS --quantity \$PRICE --keyfile - | arweave sign-transaction --keyfile - | arweave send-transaction)
+          echo "AR TX ID: \$TX_ID"
+
+      - name: Confirm payment with Liteseed
+        run: |
+          curl -X PUT https://api.liteseed.xyz/tx/\$UPLOAD_ID/\$TX_ID
+
+      - name: Success
+        run: echo "🎉 Artifact archived permanently on Arweave!"
+`} lang="yaml"/>
+
+---
+
+This GitHub Actions workflow ensures that every time you publish a new release, your build artifact is archived on Liteseed—providing an immutable, permanent backup without any manual steps.

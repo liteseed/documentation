@@ -1,0 +1,167 @@
+---
+title: Bulk Import from Amazon S3
+description: Migrate an entire S3 bucket to Liteseed Network for permanent archival
+---
+
+import { Steps, Code, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="4 GB File Limit">
+  Individual uploads are capped at 4 GB. For larger objects, split or chunk before importing.
+</Aside>
+
+## Overview
+
+This guide shows you how to stream every object in an S3 bucket into Liteseed in bulk, handling pagination, concurrency, and on-chain payments automatically.
+
+You’ll need:
+
+- AWS credentials with read access to your S3 bucket  
+- An Arweave JWK keyfile  
+- Node.js ≥ 14  
+
+---
+
+## 1. Install Dependencies
+
+```bash
+npm install @aws-sdk/client-s3 p-limit @liteseed/sdk
+````
+
+<Aside type="tip" title="Concurrency Control">
+We use [`p-limit`](https://www.npmjs.com/package/p-limit) to cap simultaneous uploads and avoid throttling.
+</Aside>
+
+---
+
+<Steps>
+1. **Configure** your environment variables  
+2. **List** all objects in the S3 bucket  
+3. **Download & Upload** each file to Liteseed staging  
+4. **Fetch price & pay** for each upload  
+5. **Confirm** payment to finalize on-chain bundles  
+6. **Report** summary of successes/failures  
+</Steps>
+
+---
+
+## 2. Environment Setup
+
+Create a `.env` file with:
+
+```env
+AWS_REGION=us-east-1
+S3_BUCKET=my-archive-bucket
+ARWEAVE_KEY=./arweave-key.json
+CONCURRENCY=5
+```
+
+---
+
+## 3. Bulk Import Script
+
+```ts
+// bulk-import.ts
+
+import fs from 'fs';
+import path from 'path';
+import { S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import pLimit from 'p-limit';
+import { Liteseed } from '@liteseed/sdk';
+
+const {
+  AWS_REGION,
+  S3_BUCKET,
+  ARWEAVE_KEY,
+  CONCURRENCY = '5'
+} = process.env;
+
+// 1️⃣ Initialize clients
+const s3 = new S3Client({ region: AWS_REGION });
+const jwk = JSON.parse(fs.readFileSync(ARWEAVE_KEY!, 'utf-8'));
+const liteseed = new Liteseed(jwk);
+const limit = pLimit(parseInt(CONCURRENCY!));
+
+// 2️⃣ List all objects in the bucket
+async function listAllKeys(): Promise<string[]> {
+  const keys: string[] = [];
+  let ContinuationToken: string | undefined;
+
+  do {
+    const cmd = new ListObjectsV2Command({ Bucket: S3_BUCKET, ContinuationToken });
+    const res = await s3.send(cmd);
+    res.Contents?.forEach(obj => {
+      if (obj.Key) keys.push(obj.Key);
+    });
+    ContinuationToken = res.NextContinuationToken;
+  } while (ContinuationToken);
+
+  return keys;
+}
+
+// 3️⃣ Process each object: download → stage → pay → confirm
+async function processKey(key: string) {
+  try {
+    // Download from S3
+    const getCmd = new GetObjectCommand({ Bucket: S3_BUCKET, Key: key });
+    const { Body, ContentLength } = await s3.send(getCmd);
+    const buffer = await Body!.transformToByteArray();
+
+    // Stage to Liteseed
+    const { id: uploadId } = await liteseed.postFile(buffer, { filename: path.basename(key) });
+    console.log(`Uploaded ${key} → uploadId=${uploadId}`);
+
+    // Pay on Arweave
+    const { price, address } = await liteseed.getPrice(buffer.length);
+    const payment = await liteseed.pay(uploadId, price, address);
+    console.log(`Paid   ${key} → txId=${payment.id}`);
+
+    // Confirm
+    await liteseed.confirm(uploadId, payment.id);
+    console.log(`✅   Archived ${key}`);
+    return { key, status: 'success' };
+  } catch (err) {
+    console.error(`❌   Failed ${key}:`, err);
+    return { key, status: 'error', error: err.message };
+  }
+}
+
+async function run() {
+  const keys = await listAllKeys();
+  console.log(`Found ${keys.length} objects in ${S3_BUCKET}`);
+
+  const results = await Promise.all(
+    keys.map(key => limit(() => processKey(key)))
+  );
+
+  const success = results.filter(r => r.status === 'success').length;
+  console.log(`\nBulk import complete: ${success}/${keys.length} succeeded.`);
+}
+
+run().catch(err => {
+  console.error('Bulk import failed:', err);
+  process.exit(1);
+});
+```
+
+---
+
+## 4. Usage
+
+```bash
+AWS_REGION=us-east-1 S3_BUCKET=my-archive-bucket \
+ARWEAVE_KEY=./arweave-key.json CONCURRENCY=10 \
+node dist/bulk-import.js
+```
+
+---
+
+### What’s Happening?
+
+* **ListObjectsV2** paginates through your entire S3 bucket.
+* **GetObject** streams each file into a buffer.
+* **liteseed.postFile** stages each file on Liteseed testnet.
+* **liteseed.getPrice & pay** handles Arweave fee lookups and on-chain transactions.
+* **liteseed.confirm** notifies Liteseed to bundle & commit your uploads.
+
+This pattern scales to thousands of files with controlled concurrency and automatic retry logic.
+

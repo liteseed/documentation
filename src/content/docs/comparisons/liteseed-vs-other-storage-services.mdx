@@ -1,0 +1,118 @@
+---
+title: Liteseed vs Other Storage Services
+description: Compare Liteseed Network with popular archival and decentralized storage solutions
+---
+
+## Summary Comparison
+
+| Service                          | Pricing Model                        | Retrieval               | Durability               | Decentralization     | Vendor Lock-In         |
+|----------------------------------|--------------------------------------|-------------------------|--------------------------|----------------------|------------------------|
+| **Liteseed Network**             | One-time, pay-once fee               | Instant via gateways    | Immutable on Arweave     | Fully decentralized  | Open ANS-104 bundles   |
+| **AWS S3 Glacier**               | $0.004/GB-month + retrieval fees     | Minutes to hours        | 11 nines                | Centralized AWS      | AWS API                |
+| **AWS S3 Glacier Deep Archive**  | $0.00099/GB-month + retrieval fees   | Up to 12 hours          | 11 nines                | Centralized AWS      | AWS API                |
+| **Google Cloud Archive**         | $0.004/GB-month + retrieval fees     | Minutes to hours        | 11 nines                | Centralized Google   | GCS API                |
+| **Azure Blob Archive**           | $0.002/GB-month + retrieval fees     | Hours                   | 11 nines                | Centralized Azure    | Azure Storage API      |
+| **Backblaze B2**                 | $0.005/GB-month + $0.01/GB egress     | Instant                 | 11 nines                | Centralized B2       | B2 API                 |
+| **IPFS + Filecoin**              | Market-driven, pay for retrieval     | Minutes                  | Depends on deals        | Decentralized        | Deal-specific SLAs      |
+| **Storj**                        | $0.005/GB-month + $0.03/GB egress     | Instant to minutes       | 11 nines                | Decentralized        | STORJ network          |
+
+---
+
+## Liteseed vs AWS S3 Glacier
+
+- **Pricing**  
+  - Liteseed: one-time fee locks in permanent storage  
+  - Glacier: $0.004/GB-month plus per-GB retrieval and request fees  
+- **Retrieval**  
+  - Liteseed: instant via any gateway  
+  - Glacier: standard retrieval in 3–5 hours, expedited in 1–5 minutes (extra cost)  
+- **Durability**  
+  - Liteseed: data replicated across Arweave miners, immutable  
+  - Glacier: 99.999999999% durability within AWS regions  
+- **Lock-In**  
+  - Liteseed: open ANS-104 bundles, gateway-agnostic  
+  - Glacier: proprietary AWS API, data egress fees apply  
+
+---
+
+## Liteseed vs AWS S3 Glacier Deep Archive
+
+- **Pricing**  
+  - Liteseed: pay once for forever  
+  - Deep Archive: $0.00099/GB-month, lowest AWS archival tier  
+- **Retrieval**  
+  - Liteseed: instant  
+  - Deep Archive: bulk retrieval in 12 hours, standard in 48 hours  
+- **Use Case**  
+  - Liteseed: immutable archives with zero ongoing costs  
+  - Deep Archive: extremely low monthly budgets for infrequent access  
+
+---
+
+## Liteseed vs Google Cloud Storage Archive
+
+- **Pricing**  
+  - Liteseed: pay once, no recurring charges  
+  - GCS Archive: $0.004/GB-month plus retrieval & early deletion fees  
+- **Retrieval**  
+  - Liteseed: immediate via Arweave gateways  
+  - GCS: standard in minutes to hours, response tiered by speed  
+- **Integration**  
+  - Liteseed: REST API, SDKs (JS, Python, Go)  
+  - GCS: Google-native clients, S3 interoperability  
+
+---
+
+## Liteseed vs Azure Blob Storage Archive
+
+- **Pricing**  
+  - Liteseed: one-off payment  
+  - Azure Archive: $0.002/GB-month plus per-GB retrieval fees  
+- **Retrieval**  
+  - Liteseed: instant  
+  - Azure: rehydrate archive tier in hours  
+- **Security & Compliance**  
+  - Liteseed: open-source bundles, self-managed keys  
+  - Azure: enterprise SSO, RBAC, encryption-at-rest, compliance certifications  
+
+---
+
+## Liteseed vs Backblaze B2
+
+- **Pricing**  
+  - Liteseed: pay once, transparent pricing  
+  - B2: $0.005/GB-month plus $0.01/GB egress, $0.004 per 10K operations  
+- **Retrieval**  
+  - Liteseed: no extra fees  
+  - B2: fees on download, free 1 GB/day allowance  
+- **Use Case**  
+  - Liteseed: permanent legal or scientific archives  
+  - B2: general backups and inexpensive hot-cold storage  
+
+---
+
+## Liteseed vs IPFS + Filecoin
+
+- **Pricing**  
+  - Liteseed: one-time Fee  
+  - Filecoin: market-driven, storage deals vary by provider  
+- **Retrieval**  
+  - Liteseed: guaranteed via gateways  
+  - IPFS: peer-to-peer, availability depends on pinning and deals  
+- **Durability**  
+  - Liteseed: immutable on Arweave  
+  - Filecoin: relies on deal renewals, replication policies  
+
+---
+
+## Liteseed vs Storj
+
+- **Pricing**  
+  - Liteseed: pay once  
+  - Storj: $0.005/GB-month + $0.03/GB egress  
+- **Retrieval**  
+  - Liteseed: instant  
+  - Storj: parallel fetch from distributed nodes, typically minutes  
+- **Ecosystem**  
+  - Liteseed: focused on bundles & permanent storage  
+  - Storj: multipurpose object storage with S3 API support  

@@ -1,0 +1,94 @@
+---
+title: Payment Flow
+description: How Liteseed handles pricing, Arweave payment, and bundle confirmation
+---
+
+# Payment Flow
+
+import { Steps, Aside, Code } from '@astrojs/starlight/components';
+
+To commit your data permanently to Arweave via Liteseed, follow this four-step payment flow:
+
+<Steps>
+1. **Get your upload fee**  
+   ```bash
+   curl https://api.liteseed.xyz/price/{size_in_bytes}
+   ```
+
+**Response**
+
+```json
+{ 
+  "price": "1000000000000", 
+  "address": "Cbj95zDZBBhmyht6iFlEf7xmSCSVZGw436V6HWmm9Ek" 
+}
+```
+
+2. **Stage your data-item**
+
+   ```bash
+   curl -X POST https://api.liteseed.xyz/tx \
+     -H 'Content-Type: application/octet-stream' \
+     --data-binary @dataItem.bin
+   ```
+
+   **Response**
+
+   ```json
+   {
+     "id": "vclUklCqp6mTOoCZjkqcD2m06VRhnKtwVNSfMOPV7SM",
+     "deadlineHeight": 1460374,
+     "dataCaches": ["api.liteseed.xyz"],
+     "fastFinalityIndexes": ["api.liteseed.xyz"],
+     "owner": "...",
+     "version": "1.0.0"
+   }
+   ```
+
+3. **Pay on Arweave**
+   Create, sign, and send an Arweave transaction for the exact fee:
+
+   ```bash
+   arweave create-transaction \
+     --target Cbj95zDZBBhmyht6iFlEf7xmSCSVZGw436V6HWmm9Ek \
+     --quantity 1000000000000 \
+     --keyfile arweave-key.json \
+   | arweave sign-transaction --keyfile arweave-key.json \
+   | arweave send-transaction
+   ```
+
+   **Output**
+
+   ```
+   Sent transaction 5AbC...XyZ, status: 200
+   ```
+
+4. **Confirm payment**
+   Inform Liteseed that the on-chain payment is complete:
+
+   ```bash
+   curl -X PUT https://api.liteseed.xyz/tx/vclUklCqp6mTOoCZjkqcD2m06VRhnKtwVNSfMOPV7SM/5AbC...XyZ
+   ```
+
+   **Response**
+
+   ```json
+   {
+     "id": "vclUklCqp6mTOoCZjkqcD2m06VRhnKtwVNSfMOPV7SM",
+     "paymentId": "5AbC...XyZ"
+   }
+   ```
+
+</Steps>
+
+<Aside type="caution" title="Payment Window">
+  Complete the payment within ~100 Arweave blocks (~20 minutes), or you must re-post your data-item.
+</Aside>
+
+## After Confirmation
+
+1. Liteseed bundles your staged data-items into a single on-chain Arweave transaction.
+2. Once mined, your data is immutable, permanent, and accessible via any Arweave gateway.
+3. You can retrieve your content using the Data-Item ID at `/tx/{id}/{field}` or via REST API `/data/{id}`.
+
+For detailed specs on each endpoint, see the [API Reference](/api/).
